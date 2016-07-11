@@ -1,0 +1,30 @@
+<template name="rank">
+    <div class="rank">
+        <div class="row rank-square">
+            <div class="column week-rank">
+                <img src="/img/week-rank.png" alt="">
+                {{> weekRank}}
+            </div>
+            <div class="vertical-divider">
+                <!--<span class="line"></span>-->
+            </div>
+            <div class="column last-week-rank">
+                <img src="/img/last-week-rank.png" alt="">
+                <!--<div class="row th-title">-->
+                    <!--<div>微信昵称</div>-->
+                    <!--<div>游戏时间</div>-->
+                <!--</div>-->
+                {{> lastWeekRank}}
+                <div class="content">
+                    恭喜以上三位大奖得主! 请及时到媛育月子中心兑换奖品!
+                </div>
+            </div>
+        </div>
+        <div class="row my-rank">
+            <div class="column">
+                <img id="my-rank-button" src="/img/my-rank.png" alt="">
+            </div>
+        </div>
+    </div>
+    {{> myRankModal}}
+</template>
