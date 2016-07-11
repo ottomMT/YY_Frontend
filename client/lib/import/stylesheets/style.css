@@ -413,3 +413,12 @@ body{
 .focus img{
   width: 8rem;
 }
+
+/*规则页面*/
+.rule{
+  font-size: 0;
+}
+.rule img{
+  width: 16rem;
+  height: auto;
+}
