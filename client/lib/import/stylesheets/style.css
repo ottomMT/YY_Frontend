@@ -291,3 +291,12 @@ body{
   /*margin-top: -0.5rem;*/
   margin-bottom: 1rem;
 }
+.modal .point-img{
+  position: fixed;
+  top: 0;
+  right: 0.3rem;
+}
+.modal .point-img img{
+  width: 4.2rem;
+  height: auto;
+}

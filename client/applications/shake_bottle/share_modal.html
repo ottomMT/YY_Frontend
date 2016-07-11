@@ -1,21 +1,17 @@
 <template name="shareModal">
-    <div id="shake-result-modal" class="modal">
+    <div id="share-modal" class="modal">
+        <div class="point-img">
+            <img src="/img/point.png" alt="">
+        </div>
         <div class="center-square zoom">
             <div class="content">
-                <p>恭喜您 XXX</p>
-                <p>本次摇奶瓶耗时为 6.35 秒</p>
-                <p>您的最高纪录为 23.87 秒</p>
-                <p>当前位居 21 名</p>
-                <p>得到媛育月子中心提供的婴儿车一份</p>
+                <p>您已参与过一次啦!</p>
+                <p>分享到朋友圈</p>
+                <p>可增加一次机会呦</p>
             </div>
             <div class="row">
                 <div class="column">
-                    <a href="{{pathFor 'rank'}}" >
-                        <img id="week-rank-button" src="/img/week-rank-button.png" alt="">
-                    </a>
-                </div>
-                <div class="column">
-                    <img id="continue-shake" src="/img/continue-shake.png" alt="">
+                    <img id="close-share-modal-button" class="close-modal-button" src="/img/close.png" alt="">
                 </div>
             </div>
         </div>
