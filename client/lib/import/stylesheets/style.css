@@ -300,3 +300,23 @@ body{
   width: 4.2rem;
   height: auto;
 }
+
+/*我的奖品列表界面样式*/
+.my-prize-list{
+  background-color: #FFA8AD;
+  height: 100%;
+}
+.my-prize-list .descon{
+  font-size: 0.75rem;
+  color: white;
+  padding: 1rem;
+  line-height: 1.5;
+}
+.my-prize-list .prize-list .prize .head{
+  background-color: #FFF0A7;
+  color: #FF446F;
+}
+.my-prize-list .prize-list .prize .foot{
+  background-color: #FFD1A7;
+  color: #FF7190;
+}
