@@ -312,11 +312,104 @@ body{
   padding: 1rem;
   line-height: 1.5;
 }
+.my-prize-list .prize{
+  margin-bottom: 0.85rem;
+}
+.my-prize-list .prize.used{
+  -webkit-filter: grayscale(100%);
+  -moz-filter: grayscale(100%);
+  -ms-filter: grayscale(100%);
+  -o-filter: grayscale(100%);
+  filter: grayscale(100%);
+  filter: gray;
+}
+.my-prize-list .prize.used .head{
+  color: #B3B3B4 !important;
+}
+.my-prize-list .prize.used .foot{
+  color: #B1B1B2 !important;
+}
 .my-prize-list .prize-list .prize .head{
   background-color: #FFF0A7;
   color: #FF446F;
+  padding: 0.85rem 1rem 0.85rem 1rem;
 }
 .my-prize-list .prize-list .prize .foot{
   background-color: #FFD1A7;
   color: #FF7190;
+  font-size: 0.6rem;
+  padding: 0.3rem 1rem 0.3rem 1rem;
+}
+.my-prize-list .qrcode-modal{
+  background-color: #FFA9AE;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: none;
+  opacity: 0;
+}
+.my-prize-list .qrcode-modal p{
+  font-size: 1rem;
+  color: white;
+
+  width: 80%;
+  text-align: center;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+.my-prize-list .qrcode-modal .use-tip{
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+.my-prize-list .qrcode-modal .prize-name{
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+.my-prize-list .qrcode-square{
+  text-align: center;
+}
+.my-prize-list .qrcode-square img{
+  width: 8rem;
+  border: 2px solid white;
+}
+.my-prize-list .qrcode-modal .actions{
+  text-align: center;
+}
+.my-prize-list .qrcode-modal .close-button{
+  border: 1px solid #FFDCDF;
+  border-radius: .4rem;
+  color: white;
+  display: inline-block;
+  padding: 0.5rem .9rem 0.5rem .9rem;
+}
+
+/*关注服务号提示页面*/
+.focus{
+  background-color: #FFA9AE;
+  height: 100%;
+
+  text-align: center;
+  padding-top: 3rem;
+}
+
+.focus p{
+  color: white;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.focus .use-tip{
+  margin-bottom: 0.8rem;
+}
+
+.focus .use-tip-bottom{
+  width: 14rem;
+  margin: 0 auto;
+  margin-top: 0.6rem;
+}
+
+.focus img{
+  width: 8rem;
 }
