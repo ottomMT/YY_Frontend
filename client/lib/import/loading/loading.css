@@ -1,0 +1,20 @@
+.loading-message {
+  color: #fff;
+  font-size: 0.54rem;
+  font-weight: 300;
+  font-family: sans-serif;
+}
+.pg-loading-screen .pg-loading-html{
+  margin-top: 0;
+}
+
+.pg-loading-screen .pg-loading-html p{
+  margin-bottom: 0.3rem;
+}
+.sk-spinner-rotating-plane.sk-spinner {
+  background-color: #fff;
+}
+
+.sk-spinner > .sk-cube {
+  background-color: #fff;
+}

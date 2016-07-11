@@ -1,0 +1,26 @@
+<template name="shakeBottle">
+    <div class="shake-bottle">
+        <div class="row animation-square">
+            <div class="column bottle">
+                <img src="/img/bottle.png" alt="">
+            </div>
+            <div class="column thermometer">
+                <img src="/img/thermometer.png" alt="">
+                <div class="temperature" style="height: {{temperature}}rem"></div>
+            </div>
+        </div>
+        <div class="row actions">
+            <div id="start" class="start column">
+                <img src="/img/start.png" alt="">
+            </div>
+            <div id="rule" class="rule column">
+                <img src="/img/rule.png" alt="">
+            </div>
+            <div id="rank" class="rank column">
+                <img src="/img/rank.png" alt="">
+            </div>
+        </div>
+    </div>
+    {{> shakeResultModal}}
+    {{> shareModal}}
+</template>
