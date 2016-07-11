@@ -37,3 +37,4 @@ service-configuration               # 三方平台接入组件
 http
 mrt:cookies
 shake:shake
+meteorhacks:async
