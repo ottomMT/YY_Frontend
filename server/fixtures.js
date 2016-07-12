@@ -1,4 +1,6 @@
-if (Activity.find().count() < 10) {
+if (UserPrizesList.find().count() < 5) {
+    console.log("sdfgsdgsd");
+    console.log(UserPrizesList.find().count());
     var now = new Date().getTime();
     // 创建三个活动
     var author = "Melse",
@@ -6,29 +8,45 @@ if (Activity.find().count() < 10) {
         authorId = "KoAJbtddzzyKpZNaS",
         userId = "KoAJbtddzzyKyuNaS"
 
-    // Activity.insert({
-    //     author: author,
-    //     authorId: authorId,
-    //     createAt: createAt,
-    //     name: "史蒂夫管理费格式化了",
-    //     startAt: now,
-    //     endAt: now,
-    //     snsTitle: "微信分享标题",
-    //     snsDesc: "snsDescsnsDescsnsDesc",
-    //     content: "三打两建发空格都上课了风格和上课更合适了过户",
-    //     pageView: "2089"
-    // });
-
-    UserPrizesList.insert({
-        prizeId: "uZT3LMqdR3hhqfkWx",
-        userId: "uZT3LMqdR3hhqfkWx",
-        activeId: "RKqYgBmhJiGJovozD",
-        use: false,
-        verifyUserId: "uZT3LMqdR3hhqfkWx",
-        verifyUserName: "melse",
-        verifyTime: now,
-        getTime: now
+    Activity.insert({
+        author: author,
+        authorId: authorId,
+        createAt: createAt,
+        name: "史蒂夫管理费格式化了",
+        startAt: now,
+        endAt: now,
+        snsTitle: "分享标题哦",
+        snsDesc: "分享简介哦哦哦哦哦哦哦",
+        content: "三打两建发空格都上课了风格和上课更合适了过户",
+        pageView: "2089"
     });
+    for(var i =0; i < 5; i++){
+        PrizeList.insert({
+            name: "港版强生婴儿牛奶沐浴露300ml"+i,
+            author: "chengcheng",
+            authorId: "o2NRxwTXeGDWCTvTooBRoNbe5nuw",
+            createAt: now,
+            activeId: "sdfgsdgfdsg",
+            isTopPrize: false,
+            probability: 1,
+            total: 20,
+            expiryDate:now
+        });
+    }
+    for(var i =0; i<5; i++){
+        UserPrizesList.insert({
+            prizeId: "uZT3LMqdR3hhqfkWx",
+            prizeName: "港版强生婴儿牛奶沐浴露300ml" + i,
+            userId: "o2NRxwTXeGDWCTvTooBRoNbe5nuw",
+            activeId: "RKqYgBmhJiGJovozD",
+            use: false,
+            verifyUserId: "uZT3LMqdR3hhqfkWx",
+            verifyUserName: "melse",
+            verifyTime: now,
+            getTime: now
+        });
+
+    }
 };
 // if (MamaPas.find().count() < 4 ) {
 //   var now = new Date().getTime();

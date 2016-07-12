@@ -13,6 +13,8 @@ Meteor.publish('prize', function() {
 // 只取该用户自己的奖品
 Meteor.publish('userPrizes', function() {
   if(this.userId){
+    // return UserPrizesList.find();
+    // console.log(this);
     return UserPrizesList.find({userId: this.userId});
   }else{
     this.ready();

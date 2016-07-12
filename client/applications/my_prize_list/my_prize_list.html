@@ -6,53 +6,85 @@
             <p>1、点击使用福利券可获得兑换二维码</p>
             <p>1、点击使用福利券可获得兑换二维码</p>
         </div>
-        <div class="prize-list">
-            <div class="prize">
-                <div class="head">
-                    港版强生婴儿牛奶沐浴露300ml
-                </div>
-                <div class="foot row">
-                    <span>
-                        <nobr>兑换有效期至:2016.09.13</nobr>
-                    </span>
-                    <span class="flex"></span>
-                    <span>
-                        未兑换
-                    </span>
-                </div>
-            </div>
-        </div>
 
-        <div class="prize-list">
-            <div class="prize used">
-                <div class="head">
-                    港版强生婴儿牛奶沐浴露300ml
+        {{# if noPrize}}
+            <div class="no-prize row">
+                <div class="column">
+                    亲~您还没有奖品快摇起来吧!
                 </div>
-                <div class="foot row">
-                    <span>
-                        兑换有效期至:2016.09.13
-                    </span>
-                    <span class="flex"></span>
-                    <span>
-                        已兑换
-                    </span>
+                <div class="column">
+                    <a href="{{pathFor 'shakeBottle'}}">
+                        <img class="start-game-button" src="/img/start.png" alt="">
+                    </a>
                 </div>
             </div>
-        </div>
-        <div class="not-start">
-            7月22日活动开始哦!
-        </div>
+        {{else}}
+            {{# if this}}
+                <div class="prize-list">
+                    {{# each this}}
+                        {{# if unUsed}}
+                            <div class="prize">
+                                <div class="head">
+                                    {{prizeName}}
+                                </div>
+                                <div class="foot row">
+                        <span>
+                            <nobr>兑换有效期至:{{expiryDate}}</nobr>
+                        </span>
+                                    <span class="flex"></span>
+                        <span>
+                            未兑换
+                        </span>
+                                </div>
+                            </div>
+                        {{/if}}
+                    {{/each}}
 
-        <div class="no-prize row">
-            <div class="column">
-                亲~您还没有奖品快摇起来吧!
-            </div>
-            <div class="column">
-                <a href="{{pathFor 'shakeBottle'}}">
-                    <img class="start-game-button" src="/img/start.png" alt="">
-                </a>
-            </div>
-        </div>
+                    {{# each this}}
+                        {{# if use}}
+                            <div class="prize used">
+                                <div class="head">
+                                    {{prizeName}}
+                                </div>
+                                <div class="foot row">
+                        <span>
+                            <nobr>兑换有效期至:2016.09.13</nobr>
+                        </span>
+                                    <span class="flex"></span>
+                        <span>
+                            已兑换
+                        </span>
+                                </div>
+                            </div>
+                        {{/if}}
+                    {{/each}}
+                </div>
+
+                <!--<div class="prize-list">-->
+                <!--<div class="prize used">-->
+                <!--<div class="head">-->
+                <!--港版强生婴儿牛奶沐浴露300ml-->
+                <!--</div>-->
+                <!--<div class="foot row">-->
+                <!--<span>-->
+                <!--兑换有效期至:2016.09.13-->
+                <!--</span>-->
+                <!--<span class="flex"></span>-->
+                <!--<span>-->
+                <!--已兑换-->
+                <!--</span>-->
+                <!--</div>-->
+                <!--</div>-->
+                <!--</div>-->
+            {{ else }}
+                <div class="not-start">
+                    7月22日活动开始哦!
+                </div>
+            {{/if}}
+        {{/if}}
+
+
+
         {{> prizeQrCodeModal}}
     </div>
 </template>
