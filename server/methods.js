@@ -18,5 +18,9 @@ Meteor.methods({
       }
     });
     return result;
+  },
+  getServerTime: function () {
+    var currentTime = new Date();
+    return currentTime;
   }
 });

@@ -7,7 +7,7 @@
             <p>1、点击使用福利券可获得兑换二维码</p>
         </div>
 
-        {{# if noPrize}}
+        {{# if noUserPrize}}
             <div class="no-prize row">
                 <div class="column">
                     亲~您还没有奖品快摇起来吧!
@@ -19,10 +19,11 @@
                 </div>
             </div>
         {{else}}
-            {{# if this}}
+            {{# if Prizes}}
                 <div class="prize-list">
-                    {{# each this}}
+                    {{# each Prizes}}
                         {{# if unUsed}}
+                            {{#if Expiryed}}
                             <div class="prize">
                                 <div class="head">
                                     {{prizeName}}
@@ -37,10 +38,11 @@
                         </span>
                                 </div>
                             </div>
+                            {{/if}}
                         {{/if}}
                     {{/each}}
 
-                    {{# each this}}
+                    {{# each Prizes}}
                         {{# if use}}
                             <div class="prize used">
                                 <div class="head">
@@ -48,7 +50,7 @@
                                 </div>
                                 <div class="foot row">
                         <span>
-                            <nobr>兑换有效期至:2016.09.13</nobr>
+                            <nobr>兑换有效期至:{{expiryDate}}</nobr>
                         </span>
                                     <span class="flex"></span>
                         <span>
@@ -58,24 +60,24 @@
                             </div>
                         {{/if}}
                     {{/each}}
-                </div>
 
-                <!--<div class="prize-list">-->
-                <!--<div class="prize used">-->
-                <!--<div class="head">-->
-                <!--港版强生婴儿牛奶沐浴露300ml-->
-                <!--</div>-->
-                <!--<div class="foot row">-->
-                <!--<span>-->
-                <!--兑换有效期至:2016.09.13-->
-                <!--</span>-->
-                <!--<span class="flex"></span>-->
-                <!--<span>-->
-                <!--已兑换-->
-                <!--</span>-->
-                <!--</div>-->
-                <!--</div>-->
-                <!--</div>-->
+                    {{# each expiryUserPrizeList}}
+                        <div class="prize used">
+                            <div class="head">
+                                {{prizeName}}
+                            </div>
+                            <div class="foot row">
+                        <span>
+                            <nobr>兑换有效期至:{{expiryDate}}</nobr>
+                        </span>
+                                <span class="flex"></span>
+                        <span>
+                            已过期
+                        </span>
+                            </div>
+                        </div>
+                    {{/each}}
+                </div>
             {{ else }}
                 <div class="not-start">
                     7月22日活动开始哦!
