@@ -8,9 +8,9 @@ Template.myPrizeList.helpers({
         // return tPrize.expiryDate;
     },
     noPrize: function () {
-        var now = new Date();
-        var currentActive = Activity.findOne({_id: "8ZMopGZyyDXb33ZbR"});
-        return !this.length && (now > currentActive.startAt);
+        // var now = new Date();
+        // var currentActive = Activity.findOne({_id: "8ZMopGZyyDXb33ZbR"});
+        return 0;
     }
 });
 Template.myPrizeList.events({
@@ -32,5 +32,6 @@ Template.myPrizeList.events({
         },300,function () {
             $(this).css('display','none')
         });
+        $(".qrcode-square canvas").remove();
     }
 });

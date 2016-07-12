@@ -47,8 +47,7 @@ if(PrizeList.find().count() < 2){
         out: 0,
         remain: 400,
         probability: 100,
-        startAt: new Date('2016-3-1'),
-        endAt: new Date('2016-8-1')
+        expiryDate: new Date('2016-8-1')
     });
 
     console.log('result - ', result);

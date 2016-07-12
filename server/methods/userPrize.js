@@ -82,6 +82,7 @@ Meteor.methods({
          * 剩余数量大于 0 的奖品
          */
         var remainPrizes = PrizeList.find({remain: {$gt: 0}, activeId: config.activity}).fetch();
+        var prizeInfo = {};
         // console.log('remainPrizes', remainPrizes);
 
 
@@ -100,6 +101,7 @@ Meteor.methods({
              */
             _.forEach(prizes, function (item) {
 
+                prizeInfo[item._id] = item;
                 if(_.isNumber(item.remain)){
 
                     if(item.probability){
@@ -167,6 +169,7 @@ Meteor.methods({
                 prizeId: prizeId,
                 userId: Meteor.userId(),
                 activeId: activeId,
+                prizeName: prizeInfo[prizeId].name,
                 use: false,
                 time: config.time,
                 getTime: new Date().getTime()

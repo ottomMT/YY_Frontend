@@ -19,9 +19,9 @@
                 </div>
             </div>
         {{else}}
-            {{# if this}}
+            {{# if prizes}}
                 <div class="prize-list">
-                    {{# each this}}
+                    {{# each prizes}}
                         {{# if unUsed}}
                             <div class="prize">
                                 <div class="head">
@@ -40,7 +40,7 @@
                         {{/if}}
                     {{/each}}
 
-                    {{# each this}}
+                    {{# each prizes}}
                         {{# if use}}
                             <div class="prize used">
                                 <div class="head">
