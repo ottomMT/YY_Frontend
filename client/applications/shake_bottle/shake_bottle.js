@@ -3,7 +3,18 @@ Template.shakeBottle.events({
         $(".bottle").addClass("shake");
         setTimeout(function () {
             $(".bottle").removeClass("shake");
-        },1000);
+        },800);
+
+        var TH = Session.get('temperature') - 0.1;
+        Session.set('temperature', TH);
+        var THRem = TH + "rem";
+        $('.temperature').css('height',THRem);
+        if(TH <= 3.5){
+            $("#shake-result-modal").css('display','block');
+            setTimeout(function () {
+                $("#shake-result-modal .center-square").removeClass("zoom");
+            },10);
+        }
         // var TH = temperature - 1;
         // console.log('this.tem', temperature);
         // console.log('this', this);
@@ -47,8 +58,8 @@ Template.shakeBottle.events({
     // }
 });
 
-// Template.shakeBottle.helpers({
-//     temperature:function () {
-//         return 8.3
-//     }
-// });
+Template.shakeBottle.helpers({
+    temperature:function () {
+        Session.set('temperature', '8.3');
+    }
+});
