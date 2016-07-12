@@ -15,6 +15,8 @@ Meteor.publish('userPrizes', function() {
   // console.log('this.userId', this.userId);
   return UserPrizesList.find();
   if(this.userId){
+    // return UserPrizesList.find();
+    // console.log(this);
     return UserPrizesList.find({userId: this.userId});
   }else{
     this.ready();

@@ -168,6 +168,7 @@ Meteor.methods({
                 userId: Meteor.userId(),
                 activeId: activeId,
                 use: false,
+                time: config.time,
                 getTime: new Date().getTime()
             });
         }

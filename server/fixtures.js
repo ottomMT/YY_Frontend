@@ -1,4 +1,6 @@
 if (Activity.find().count() < 1) {
+    console.log("sdfgsdgsd");
+    console.log(UserPrizesList.find().count());
     var now = new Date().getTime();
     // 创建三个活动
     var author = "Melse",
