@@ -32,5 +32,6 @@ Template.myPrizeList.events({
         },300,function () {
             $(this).css('display','none')
         });
+        $(".qrcode-square canvas").remove();
     }
 });
