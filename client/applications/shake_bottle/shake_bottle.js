@@ -20,10 +20,11 @@ Template.shakeBottle.events({
             Session.set('getPrize', true);
             var time = new Date() - Session.get('start');
             Meteor.call('shakeBbottle', {time: time, activity: 'PqPbzWD3gzkDnC2tp'}, function (error, result) {
+                    console.log('result', result);
                 var user = Meteor.user(),
                     nickname = user.profile.wechat.nickname, //昵称
                     timeEnd = (time/1000).toFixed(2), // 摇晃时间
-                    prize = result.prizeName; // 奖品名称
+                    prize = result.name; // 奖品名称
 
                 $('#shake-result-modal .content').html('<p>恭喜您'+ nickname +'</p><p>本次摇奶瓶耗时为 '+ timeEnd +' 秒</p><p>得到'+ prize +'</p>');
                 $("#shake-result-modal").css('display','block');

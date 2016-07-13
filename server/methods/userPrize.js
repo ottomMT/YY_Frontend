@@ -3,7 +3,7 @@
  */
 
 Meteor.methods({
-    
+
     shakeBbottle: function (config) {
         console.log('config', config);
         var user = Meteor.user();
@@ -83,7 +83,7 @@ Meteor.methods({
          */
         var remainPrizes = PrizeList.find({remain: {$gt: 0}, activeId: config.activity}).fetch();
         var prizeInfo = {};
-        console.log('remainPrizes', remainPrizes);
+        // console.log('remainPrizes', remainPrizes);
 
 
         /**
@@ -120,8 +120,6 @@ Meteor.methods({
             /**
              * 计算是否中了「大」奖,如果中了,直接返回该奖品,如果未中,则继续发放普通奖品
              */
-            console.log('probabilityPrizes', probabilityPrizes);
-            console.log('prizesBox', prizesBox.length);
             var myPrice = bigPrize(probabilityPrizes); // 几率中奖结果
             if(myPrice) {
                 return myPrice;
@@ -155,7 +153,7 @@ Meteor.methods({
                 var allPrizes = prizesBox.sort(function (a, b) {
                     return Math.random()>.5 ? -1 : 1;
                 });
-                console.log('allPrizes', allPrizes.length);
+                // console.log('allPrizes', allPrizes.length);
                 return allPrizes[Math.ceil(Math.random()*allPrizes.length) - 1];
             }
 
@@ -177,6 +175,7 @@ Meteor.methods({
                 prizeName: prizeInfo[prizeId].name,
                 use: false,
                 time: config.time,
+                nickname: user && user.profile && user.profile.wechat && user.profile.wechat.nickname || '',
                 getTime: new Date().getTime()
             });
         }
@@ -185,14 +184,40 @@ Meteor.methods({
         PrizeList.update({_id:result}, {$inc:{out:1, remain: -1}});
         insertUserPrize(result, config.activity);
         return prizeInfo[result];
-        // return result;
+
+    },
+
+    /**
+     * 本周排名
+     * @return {[type]} [description]
+     */
+    weekRank: function(){
+      var now = new Date(), // 当前时间
+          days =  3600*1000*24, // 一天的毫秒数
+          weekday = now.getDay(), // 当前周数
+          time = new Date(moment(now).format('YYYY-MM-DD 00:00:00')).getTime() , // 今天 00:00 时间戳
+          weekStart = time - ((weekday - 1) * days), // 开始时间 本周一 00:00
+          weekEnd = time + ((7 - weekday) * days); // 结束时间 下周一 00:00
+          // 查询大于本周开始，小于本周结束，的奖品。
+          // 只取需要展示的字段「time,prizeName,nickname, getTime」
+          return UserPrizesList.find({getTime:{$gt: weekStart, $lt: weekEnd}}, {sort: {time:1}, limit: 6, fields: {prizeName: 1, getTime: 1, time: 1, nickname: 1}}).fetch();
+    },
+    /**
+     * 上周排名
+     * @return {[type]} [description]
+     */
+    lastWeekRank: function(){
+      var now = new Date(), // 当前时间
+          days =  3600*1000*24, // 一天的毫秒数
+          weekday = now.getDay(), // 当前周数
+          time = new Date(moment(now).format('YYYY-MM-DD 00:00:00')).getTime() , // 今天 00:00 时间戳
+          weekEnd = time - ((weekday - 1) * days), // 结束时间 本周一 00:00
+          weekStart = weekEnd  -  (7 * days); // 开始时间 上周一 00:00
+          // 查询上周一开始，周本一技术的奖品
+          // 只取需要展示的字段「time,prizeName,nickname, getTime」
+          return UserPrizesList.find({getTime:{$gt: weekStart, $lt: weekEnd}}, {sort: {time:1}, limit: 3, fields: {prizeName: 1, getTime: 1, time: 1, nickname: 1}}).fetch();
+    },
 
 
-        /**
-         * 返回结果
-         */
 
-        return Meteor.user();
-    }
-    
 });

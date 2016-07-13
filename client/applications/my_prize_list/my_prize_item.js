@@ -65,7 +65,7 @@ Template.myPrizeItem.events({
         $(".qrcode-square").qrcode({
             size: 160,
             background: '#fff',
-            text: this.userId + ',' + this._id,
+            text: Meteor.userId() + ',' + this._id,
         });
         $("#prizeQrCodeModal .prize-name").text(this.prizeName);
         $("#prizeQrCodeModal").css('display','block').animate({
