@@ -12,6 +12,10 @@ Template.myPrizeList.helpers({
     hasPrizes: function(){
         return UserPrizesList.find().count();
     },
+    share: function(){
+      console.log('Session', Session.get('me'));
+      return Session.get('me');
+    },
     /**
      * 验证活动是否未开始
      * 查询活动，
@@ -56,4 +60,14 @@ Template.myPrizeList.events({
  */
 Template.myPrizeList.onRendered(function () {
     $("body").css("background-color","#FFA8AD");
+});
+
+/**
+ * 页面创建设置该页面分享内容
+ * 设置 session shareConfig 为该页面分享配置
+ * @param  {[type]} function( [description]
+ * @return {[type]}           [description]
+ */
+Template.myPrizeList.onCreated(function(){
+  Session.set('shareConfig', WechatShare.myPrizeListConfig());
 });

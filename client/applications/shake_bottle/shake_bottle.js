@@ -18,8 +18,17 @@ Template.shakeBottle.events({
         if(TH <= 3.5){
 
             Session.set('getPrize', true);
-            var time = new Date() - Session.get('start');
-            Meteor.call('shakeBbottle', {time: time, activity: 'PqPbzWD3gzkDnC2tp'}, function (error, result) {
+            var time = new Date() - Session.get('start'),
+                post = {time: time, activity: 'PqPbzWD3gzkDnC2tp'},
+                sign = Sign.create(post);
+                console.log('post', post, 'sign: ', sign);
+                post.sign = sign;
+            Meteor.call('shakeBbottle', post, function (error, result) {
+
+              if(error){
+                console.error('shakeBbottle error', error);
+                return ;
+              }
                     console.log('result', result);
                 var user = Meteor.user(),
                     nickname = user.profile.wechat.nickname, //昵称
@@ -106,4 +115,14 @@ Template.shakeBottle.helpers({
  */
 Template.shakeBottle.onRendered(function () {
     $("body").css({"backgroundImage": "url('/img/bg.jpg')","backgroundSize": "cover","backgroundRepeat": "no-repeat"});
+});
+
+/**
+ * 页面创建设置该页面分享内容
+ * 设置 session shareConfig 为该页面分享配置
+ * @param  {[type]} function( [description]
+ * @return {[type]}           [description]
+ */
+Template.shakeBottle.onCreated(function(){
+  Session.set('shareConfig', WechatShare.shakeBottleConfig());
 });
