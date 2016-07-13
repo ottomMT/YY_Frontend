@@ -1,3 +1,10 @@
+Meteor.startup(function () {
+    setInterval(function () {
+        Meteor.call("getServerTime", function (error, result) {
+            Session.set("time", result);
+        });
+    }, 1000);
+});
 // Meteor.startup(function () {
 //   AutoForm.setDefaultTemplate("semanticUI");
 //   SimpleSchema.messages({
@@ -34,3 +41,5 @@
 //     keyNotInSchema: "[key] 不被 schema 允许"
 //   });
 // });
+
+

@@ -322,6 +322,8 @@ body{
   -o-filter: grayscale(100%);
   filter: grayscale(100%);
   filter: gray;
+
+  pointer-events: none;
 }
 .my-prize-list .prize.used .head{
   color: #B3B3B4 !important;

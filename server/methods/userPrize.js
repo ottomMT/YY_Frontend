@@ -83,7 +83,7 @@ Meteor.methods({
          */
         var remainPrizes = PrizeList.find({remain: {$gt: 0}, activeId: config.activity}).fetch();
         var prizeInfo = {};
-        // console.log('remainPrizes', remainPrizes);
+        console.log('remainPrizes', remainPrizes);
 
 
         /**
@@ -93,6 +93,7 @@ Meteor.methods({
          * 随机发放奖品
          */
         function send(prizes) {
+            console.log('in send');
             var prizesBox = [],
                 probabilityPrizes = [];
             /**
@@ -119,6 +120,8 @@ Meteor.methods({
             /**
              * 计算是否中了「大」奖,如果中了,直接返回该奖品,如果未中,则继续发放普通奖品
              */
+            console.log('probabilityPrizes', probabilityPrizes);
+            console.log('prizesBox', prizesBox.length);
             var myPrice = bigPrize(probabilityPrizes); // 几率中奖结果
             if(myPrice) {
                 return myPrice;
@@ -127,7 +130,6 @@ Meteor.methods({
              * 有「大」奖奖品数组非空
              * 编辑所有的奖品,计算
              */
-            console.log('probabilityPrizes'. probabilityPrizes);
             function bigPrize(probabilityPrizes){
                 var num = Math.random(), myPrize = false;
                 if(probabilityPrizes.length){
@@ -166,6 +168,7 @@ Meteor.methods({
             // console.timeEnd('in');
 
 
+
         function insertUserPrize(prizeId, activeId) {
             return UserPrizesList.insert({
                 prizeId: prizeId,
@@ -180,7 +183,8 @@ Meteor.methods({
 
         console.log('result', result, '   prizeInfo:', prizeInfo);
         PrizeList.update({_id:result}, {$inc:{out:1, remain: -1}});
-        return insertUserPrize(result, config.activity);
+        insertUserPrize(result, config.activity);
+        return prizeInfo[result];
         // return result;
 
 
