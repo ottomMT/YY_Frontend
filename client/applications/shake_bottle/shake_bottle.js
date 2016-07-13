@@ -1,4 +1,8 @@
 Template.shakeBottle.events({
+    /**
+     * 用 click 事件模拟手机摇动时的奶瓶及温度计动画
+     * 在温度到达40度时为用户发奖品
+     */
     'click .animation-square': function () {
         if(Session.get('getPrize')) return;
         Session.set('start', new Date().getTime());
@@ -40,12 +44,18 @@ Template.shakeBottle.events({
         // var THRem = TH + "rem";
         // $(".temperature").css("height", THRem);
     },
+    /**
+     * 点击'摇奖品'按钮后模拟摇奶瓶结果出现效果
+     */
     'click #start': function () {
         $("#shake-result-modal").css('display','block');
         setTimeout(function () {
             $("#shake-result-modal .center-square").removeClass("zoom");
         },10);
     },
+    /**
+     * 点击弹层周边空白区域关闭弹层
+     */
     'click .modal': function () {
         $(".modal .center-square").addClass("zoom");
         setTimeout(function () {
@@ -53,6 +63,11 @@ Template.shakeBottle.events({
         },200);
         // $(".modal").css('display','none').find(".center-square").addClass("zoom");
     },
+    /**
+     * 点击不满足继续摇后模拟分享界面弹出效果
+     * 返回的 false 值目的是阻止事件冒泡
+     * @returns {boolean}
+     */
     'click #continue-shake': function () {
         // 隐藏摇奶瓶结果界面
         $("#shake-result-modal .center-square").addClass("zoom");
@@ -76,12 +91,18 @@ Template.shakeBottle.events({
     // }
 });
 
+/**
+ * 设置页面中温度计的初始温度
+ */
 Template.shakeBottle.helpers({
     temperature:function () {
         Session.set('temperature', '8.3');
     }
 });
 
+/**
+ * 设置当前页面背景样式
+ */
 Template.shakeBottle.onRendered(function () {
     $("body").css({"backgroundImage": "url('/img/bg.jpg')","backgroundSize": "cover","backgroundRepeat": "no-repeat"});
 });

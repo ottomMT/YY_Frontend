@@ -19,6 +19,11 @@ Meteor.methods({
     });
     return result;
   },
+  /**
+   * 生成服务器时间
+   * 把时间返回
+   * @returns {Date}
+     */
   getServerTime: function () {
     var currentTime = new Date();
     return currentTime;

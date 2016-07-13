@@ -1,8 +1,9 @@
 <template name="myPrizeItem">
-  <!-- 我的奖品列表 -->
+  <!-- 奖品卡片 -->
   <div class="prize {{useClass(myPrize)}}">
     <div class="head">
-      {{prizeName}}
+        <!--奖券名称-->
+        {{prizeName}}
     </div>
     <div class="foot row">
       <span>
@@ -10,9 +11,9 @@
       </span>
       <span class="flex"></span>
       <span>
+        <!--奖券状态-->
         {{footText(myPrize)}}
       </span>
     </div>
   </div>
-  <!-- 我的奖品列表 -->
 </template>

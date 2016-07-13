@@ -441,6 +441,7 @@ body{
   font-size: 0;
 }
 .rule img{
-  width: 16rem;
+  /*width: 16rem;*/
+  width: 100%;
   height: auto;
 }

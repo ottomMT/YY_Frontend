@@ -35,6 +35,9 @@ Template.myPrizeList.helpers({
     }
 });
 
+/**
+ * 关闭奖券的二维码弹层
+ */
 Template.myPrizeList.events({
     'click #close-button': function () {
         $("#prizeQrCodeModal").animate({
@@ -48,7 +51,9 @@ Template.myPrizeList.events({
     }
 });
 
-
+/**
+ * 设置当前页面背景样式
+ */
 Template.myPrizeList.onRendered(function () {
     $("body").css("background-color","#FFA8AD");
 });

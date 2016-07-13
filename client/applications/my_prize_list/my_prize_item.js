@@ -1,5 +1,8 @@
 Template.myPrizeItem.helpers({
-    // 我的奖品详细
+    /**
+     * 我的奖品详细
+     * @returns {string}
+     */
     myPrize: function(){
       return PrizeList.findOne({_id: this.prizeId});
     },
@@ -58,7 +61,7 @@ Template.myPrizeItem.helpers({
  */
 Template.myPrizeItem.events({
     'click .prize': function () {
-        console.log('in this', this);
+        // console.log('in this', this);
         $(".qrcode-square").qrcode({
             size: 160,
             background: '#fff',

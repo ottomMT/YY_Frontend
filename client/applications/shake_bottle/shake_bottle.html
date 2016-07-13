@@ -1,24 +1,31 @@
 <template name="shakeBottle">
     <div class="shake-bottle">
+        <!--奶瓶和温度计区域-->
         <div class="row animation-square">
+            <!--奶瓶-->
             <div class="column bottle">
                 <img src="/img/bottle.png" alt="">
             </div>
+            <!--温度计-->
             <div class="column thermometer">
                 <img src="/img/thermometer.png" alt="">
                 <div class="temperature" style="height: {{temperature}}rem"></div>
             </div>
         </div>
+        <!--操作按钮区域-->
         <div class="row actions">
+            <!--摇奖品按钮-->
             <div id="start" class="start column">
                 <img src="/img/start.png" alt="">
                 <img style="display: none;" src="/img/played.png" alt="">
             </div>
+            <!--查看游戏规则按钮-->
             <div id="rule" class="rule column">
                 <a href="{{pathFor 'rule'}}">
                     <img src="/img/rule.png" alt="">
                 </a>
             </div>
+            <!--查看每周排名按钮-->
             <div id="rank" class="rank column">
                 <a href="{{pathFor 'rank'}}">
                     <img src="/img/rank.png" alt="">
@@ -26,6 +33,8 @@
             </div>
         </div>
     </div>
+    <!--摇奶瓶成绩显示弹层-->
     {{> shakeResultModal}}
+    <!--分享弹层-->
     {{> shareModal}}
 </template>
