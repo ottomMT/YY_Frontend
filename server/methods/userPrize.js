@@ -124,16 +124,17 @@ Meteor.methods({
                 return myPrice;
             }
             /**
-             * 有几率奖品数组非空
+             * 有「大」奖奖品数组非空
              * 编辑所有的奖品,计算
              */
-            function bigPrize(probabilityPrizes) {
+            console.log('probabilityPrizes'. probabilityPrizes);
+            function bigPrize(probabilityPrizes){
                 var num = Math.random(), myPrize = false;
                 if(probabilityPrizes.length){
 
                     _.forEach(probabilityPrizes, function (item) {
 
-                        if(!myPrize && _.isNumber((item.probability)) && item.probability/100 > num){
+                        if(!myPrize && _.isNumber(item.probability) && item.probability/100 > num){
                             myPrize = item._id;
                         }
 
@@ -152,6 +153,7 @@ Meteor.methods({
                 var allPrizes = prizesBox.sort(function (a, b) {
                     return Math.random()>.5 ? -1 : 1;
                 });
+                console.log('allPrizes', allPrizes.length);
                 return allPrizes[Math.ceil(Math.random()*allPrizes.length) - 1];
             }
 
@@ -176,7 +178,7 @@ Meteor.methods({
             });
         }
 
-
+        console.log('result', result, '   prizeInfo:', prizeInfo);
         PrizeList.update({_id:result}, {$inc:{out:1, remain: -1}});
         return insertUserPrize(result, config.activity);
         // return result;
