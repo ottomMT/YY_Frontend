@@ -12,7 +12,6 @@ html,body{
 }
 /*签到界面样式*/
 body{
-  /*background: #F6F6EB;*/
   font-family:Helvetica;
 }
 /*布局代码*/
@@ -44,11 +43,11 @@ body{
   flex: 1;
   box-sizing: border-box;
 }
-body{
-  background-image: url("/img/bg.jpg");
-  background-size: cover;
-  background-repeat: no-repeat;
-}
+/*body{*/
+  /*background-image: url("/img/bg.jpg");*/
+  /*background-size: cover;*/
+  /*background-repeat: no-repeat;*/
+/*}*/
 
 /*摇奶瓶页面*/
 .shake-bottle .animation-square{
@@ -302,10 +301,6 @@ body{
 }
 
 /*我的奖品列表界面样式*/
-.my-prize-list{
-  background-color: #FFA8AD;
-  height: 100%;
-}
 .my-prize-list .descon{
   font-size: 0.75rem;
   color: white;

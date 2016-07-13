@@ -24,3 +24,7 @@ Template.rank.events({
         return false;
     }
 });
+
+Template.rank.onRendered(function () {
+    $("body").css({"backgroundImage": "url('/img/bg.jpg')","backgroundSize": "cover","backgroundRepeat": "no-repeat"});
+});

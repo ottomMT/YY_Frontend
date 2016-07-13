@@ -62,3 +62,8 @@ Template.myPrizeList.events({
         },300);
     }
 });
+
+
+Template.myPrizeList.onRendered(function () {
+    $("body").css("background-color","#FFA8AD");
+});

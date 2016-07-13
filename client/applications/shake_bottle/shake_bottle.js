@@ -81,3 +81,7 @@ Template.shakeBottle.helpers({
         Session.set('temperature', '8.3');
     }
 });
+
+Template.shakeBottle.onRendered(function () {
+    $("body").css({"backgroundImage": "url('/img/bg.jpg')","backgroundSize": "cover","backgroundRepeat": "no-repeat"});
+});
