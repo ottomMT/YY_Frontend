@@ -1,92 +1,37 @@
 <template name="myPrizeList">
-    <div class="my-prize-list">
-        <div class="descon">
-            <p>使用说明:</p>
-            <p>1、点击使用福利券可获得兑换二维码</p>
-            <p>1、点击使用福利券可获得兑换二维码</p>
-            <p>1、点击使用福利券可获得兑换二维码</p>
-        </div>
-
-        {{# if noUserPrize}}
-            <div class="no-prize row">
-                <div class="column">
-                    亲~您还没有奖品快摇起来吧!
-                </div>
-                <div class="column">
-                    <a href="{{pathFor 'shakeBottle'}}">
-                        <img class="start-game-button" src="/img/start.png" alt="">
-                    </a>
-                </div>
-            </div>
-        {{else}}
-            {{# if Prizes}}
-                <div class="prize-list">
-                    {{# each Prizes}}
-                        {{# if unUsed}}
-                            {{#if Expiryed}}
-                            <div class="prize">
-                                <div class="head">
-                                    {{prizeName}}
-                                </div>
-                                <div class="foot row">
-                        <span>
-                            <nobr>兑换有效期至:{{expiryDate}}</nobr>
-                        </span>
-                                    <span class="flex"></span>
-                        <span>
-                            未兑换
-                        </span>
-                                </div>
-                            </div>
-                            {{/if}}
-                        {{/if}}
-                    {{/each}}
-
-                    {{# each Prizes}}
-                        {{# if use}}
-                            <div class="prize used">
-                                <div class="head">
-                                    {{prizeName}}
-                                </div>
-                                <div class="foot row">
-                        <span>
-                            <nobr>兑换有效期至:{{expiryDate}}</nobr>
-                        </span>
-                                    <span class="flex"></span>
-                        <span>
-                            已兑换
-                        </span>
-                                </div>
-                            </div>
-                        {{/if}}
-                    {{/each}}
-
-                    {{# each expiryUserPrizeList}}
-                        <div class="prize used">
-                            <div class="head">
-                                {{prizeName}}
-                            </div>
-                            <div class="foot row">
-                        <span>
-                            <nobr>兑换有效期至:{{expiryDate}}</nobr>
-                        </span>
-                                <span class="flex"></span>
-                        <span>
-                            已过期
-                        </span>
-                            </div>
-                        </div>
-                    {{/each}}
-                </div>
-            {{ else }}
-                <div class="not-start">
-                    7月22日活动开始哦!
-                </div>
-            {{/if}}
-        {{/if}}
-
-
-
-        {{> prizeQrCodeModal}}
+  <div class="my-prize-list">
+    <div class="descon">
+      <p>使用说明:</p>
+      <p>1、点击使用福利券可获得兑换二维码</p>
+      <p>1、点击使用福利券可获得兑换二维码</p>
+      <p>1、点击使用福利券可获得兑换二维码</p>
     </div>
+    {{# if hasPrizes}}
+        <!-- 我的奖品列表 -->
+        <div class="prize-list">
+          {{# each Prizes}}
+            {{ > myPrizeItem}}
+          {{/each}}
+        </div>
+    {{ else }}
+         {{# if unStart }}
+              <div class="not-start">
+                7月22日活动开始哦!
+              </div>
+        {{else}}
+              <!-- 没有奖品 -->
+              <div class="no-prize row">
+                <div class="column">
+                  亲~您还没有奖品快摇起来吧!
+                </div>
+                <div class="column">
+                  <a href="{{pathFor 'shakeBottle'}}">
+                    <img class="start-game-button" src="/img/start.png" alt="">
+                  </a>
+                </div>
+              </div>
+        {{/if}}
+    {{/if}}
+    {{> prizeQrCodeModal}}
+  </div>
 </template>

@@ -1,56 +1,41 @@
 Template.myPrizeList.helpers({
+    /**
+     * 我的奖品
+     */
     Prizes: function () {
-        return this;
+        return UserPrizesList.find();
     },
-    // 判断奖券是否已使用
-    unUsed: function () {
-        return !this.use;
+    /**
+     * 查询用户是否含有奖品
+     * @return {number} 奖品数量
+     */
+    hasPrizes: function(){
+        return UserPrizesList.find().count();
     },
-    // 判断奖券是否已过期
-    Expiryed: function () {
-        var now = Session.get('time');
-        var currentPrize = PrizeList.findOne({_id: this.prizeId});
-        if(currentPrize.expiryDate > now) {
-            return true;
-        } else{
-            return false;
-        };
-    },
-    // 获取奖券有效期
-    expiryDate: function () {
-        var currentPrize = PrizeList.findOne({_id: this.prizeId});
-        return moment(currentPrize.expiryDate).format('YYYY-MM-DD');
-    },
-    // 判断是否有可用奖券
-    noUserPrize: function () {
-        var now = new Date();
-        var currentActive = Activity.findOne();
-        return !this.length && (now > currentActive.startAt);
-    },
-    // 获取过期的奖券
-    expiryUserPrizeList: function () {
-        var now = Session.get('time');
-        var expiryUserPrizeList = [];
-        _.each(this, function (item) {
-            var tPrize = PrizeList.findOne({_id: item.prizeId});
-            if ( now > tPrize.expiryDate )expiryUserPrizeList.push(item);
-        });
-        return expiryUserPrizeList;
+    /**
+     * 验证活动是否未开始
+     * 查询活动，
+     * 验证活动开始时间是否小于当前时间
+     * 如果小于当前时间，活动已开始
+     * 如果不小于当前时间，活动未开始
+     * [function description]
+     * @return {boolean} 活动是否未开始
+     */
+    unStart: function(){
+      var activity = Activity.findOne();
+      if(activity && activity.startAt){
+        if(new Date() > new Date(activity.startAt)){
+          return false;
+        }else{
+          return true;
+        }
+      }else{
+         return true;
+      }
     }
 });
 
 Template.myPrizeList.events({
-    'click .prize': function () {
-        $(".qrcode-square").qrcode({
-            size: 160,
-            background: '#fff',
-            text: this.userId + ',' + this._id,
-        });
-        $("#prizeQrCodeModal .prize-name").text(this.prizeName);
-        $("#prizeQrCodeModal").css('display','block').animate({
-            opacity: 1
-        },300);
-    },
     'click #close-button': function () {
         $("#prizeQrCodeModal").animate({
             opacity: 0

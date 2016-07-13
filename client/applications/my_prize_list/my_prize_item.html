@@ -1,0 +1,18 @@
+<template name="myPrizeItem">
+  <!-- 我的奖品列表 -->
+  <div class="prize {{useClass(myPrize)}}">
+    <div class="head">
+      {{prizeName}}
+    </div>
+    <div class="foot row">
+      <span>
+        <nobr>兑换有效期至:{{deadline(myPrize)}}</nobr>
+      </span>
+      <span class="flex"></span>
+      <span>
+        {{footText(myPrize)}}
+      </span>
+    </div>
+  </div>
+  <!-- 我的奖品列表 -->
+</template>
