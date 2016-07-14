@@ -1,12 +1,17 @@
 /**
  *  配置 shake.js 基础信息
+ *  watching: 是否开始监听
+ *  shakesCount: 晃动次数记录
+ *  sensitivity: 监听灵敏度,越低越灵敏
  */
 Session.setDefault('watching', false);
 Session.setDefault('shakesCount', 0);
-Session.setDefault('sensitivity', 10);
+Session.setDefault('sensitivity', 15);
 
 /**
- * without debounce, every actual user shake will fire the callback twice right away
+ * 监听手机晃动事件,并在每次晃动后执行特定方法
+ * 执行温度计温度降低的动画
+ * 执行温度计到特定温度后停止监听晃动事件并为用户发奖
  * @type {Function}
  */
 onShake = function onShake() {
@@ -20,15 +25,24 @@ onShake = function onShake() {
     if(Session.get('getPrize')) return;
     Session.set('start', new Date().getTime());
 
-    var TH = Session.get('temperature') - 0.3;
+    /**
+     * 每晃动一次,温度计的水柱下降一定的值
+     * 通过 jquery 改变水柱的高度
+     * @type {number}
+     */
+    var TH = Session.get('temperature') - 0.03;
     Session.set('temperature', TH);
     var THRem = TH + "rem";
     $('.temperature').css('height',THRem);
+
+    /**
+     * 如果温度低于一定值则停止晃动事件,并为用户发奖.
+     */
     if(TH <= 3.5){
         Session.set('watching', false);
         Session.set('getPrize', true);
         var time = new Date() - Session.get('start'),
-            post = {time: time, activity: 'PqPbzWD3gzkDnC2tp'},
+            post = {time: time, activity: 'NdqfruthLZeKcgLgu'},
             sign = Sign.create(post);
         console.log('post', post, 'sign: ', sign);
         post.sign = sign;
@@ -59,7 +73,7 @@ onShake = function onShake() {
 };
 // onShake = _.debounce(function onShake() {
 //     Session.set('shakesCount', Session.get('shakesCount') + 1);
-// }, 750, true);  // fire the shake as soon as it occurs, but not again if less than 750ms have passed; 500 was too little
+// }, 50, true);  // fire the shake as soon as it occurs, but not again if less than 750ms have passed; 500 was too little
 
 /**
  * 程序测试用代码,暂时请勿删除,后期用来调试晃动灵敏度
@@ -78,45 +92,56 @@ Template.shakeBottle.events({
      * 用 click 事件模拟手机摇动时的奶瓶及温度计动画
      * 在温度到达40度时为用户发奖品
      */
-    // 'click .animation-square': function () {
-    //     if(Session.get('getPrize')) return;
-    //     Session.set('shakesCount',Session.get('shakesCount')+1)
-    //     Session.set('start', new Date().getTime());
-    //     // $(".bottle").addClass("shake");
-    //
-    //     var TH = Session.get('temperature') - 0.1;
-    //     Session.set('temperature', TH);
-    //     var THRem = TH + "rem";
-    //     $('.temperature').css('height',THRem);
-    //     if(TH <= 3.5){
-    //
-    //         Session.set('getPrize', true);
-    //         var time = new Date() - Session.get('start');
-    //         Meteor.call('shakeBbottle', {time: time, activity: 'PqPbzWD3gzkDnC2tp'}, function (error, result) {
-    //             var user = Meteor.user(),
-    //                 nickname = user.profile.wechat.nickname, //昵称
-    //                 timeEnd = (time/1000).toFixed(2), // 摇晃时间
-    //                 prize = result.prizeName; // 奖品名称
-    //
-    //             $('#shake-result-modal .content').html('<p>恭喜您'+ nickname +'</p><p>本次摇奶瓶耗时为 '+ timeEnd +' 秒</p><p>得到'+ prize +'</p>');
-    //             $("#shake-result-modal").css('display','block');
-    //             setTimeout(function () {
-    //                 $("#shake-result-modal .center-square").removeClass("zoom");
-    //             },10);
-    //
-    //         });
-    //         // $("#shake-result-modal").css('display','block');
-    //         // setTimeout(function () {
-    //         //     $("#shake-result-modal .center-square").removeClass("zoom");
-    //         // },10);
-    //     }
-    //     // var TH = temperature - 1;
-    //     // console.log('this.tem', temperature);
-    //     // console.log('this', this);
-    //     // this.temperature--;
-    //     // var THRem = TH + "rem";
-    //     // $(".temperature").css("height", THRem);
-    // },
+    'click .animation-square': function () {
+        if(Session.get('getPrize')) return;
+        Session.set('shakesCount',Session.get('shakesCount')+1)
+        Session.set('start', new Date().getTime());
+        // $(".bottle").addClass("shake");
+
+        var TH = Session.get('temperature') - 0.1;
+        Session.set('temperature', TH);
+        var THRem = TH + "rem";
+        $('.temperature').css('height',THRem);
+        if(TH <= 3.5){
+
+            Session.set('getPrize', true);
+            var time = new Date() - Session.get('start'),
+                post = {time: time, activity: 'NdqfruthLZeKcgLgu'},
+                sign = Sign.create(post);
+            console.log('post', post, 'sign: ', sign);
+            post.sign = sign;
+            Meteor.call('shakeBbottle', post, function (error, result) {
+
+                if(error){
+                    console.error('shakeBbottle error', error);
+                    return ;
+                }
+                console.log('result', result);
+                var user = Meteor.user(),
+                    nickname = user.profile.wechat.nickname, //昵称
+                    timeEnd = (time/1000).toFixed(2), // 摇晃时间
+                    prize = result.name; // 奖品名称
+
+
+                $('#shake-result-modal .content').html('<p>恭喜您'+ nickname +'</p><p>本次摇奶瓶耗时为 '+ timeEnd +' 秒</p><p>得到'+ prize +'</p>');
+                $("#shake-result-modal").css('display','block');
+                setTimeout(function () {
+                    $("#shake-result-modal .center-square").removeClass("zoom");
+                },10);
+
+            });
+            // $("#shake-result-modal").css('display','block');
+            // setTimeout(function () {
+            //     $("#shake-result-modal .center-square").removeClass("zoom");
+            // },10);
+        }
+        // var TH = temperature - 1;
+        // console.log('this.tem', temperature);
+        // console.log('this', this);
+        // this.temperature--;
+        // var THRem = TH + "rem";
+        // $(".temperature").css("height", THRem);
+    },
     /**
      * 点击'摇奖品'按钮后模拟摇奶瓶结果出现效果
      */
@@ -125,7 +150,10 @@ Template.shakeBottle.events({
         $("#start").css('pointer-events','none');
         if (Session.get('watching')){
             console.log("开始摇动");
-            shake.startWatch(onShake, Session.get('sensitivity'));
+            shake.startWatch(onShake, {
+                threshold: Session.get('sensitivity'),
+                timeout: 0
+            });
         } else {
             console.log("停止摇动");
             shake.stopWatch();
