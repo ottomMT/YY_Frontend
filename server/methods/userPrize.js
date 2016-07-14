@@ -11,6 +11,7 @@ Meteor.methods({
         }
 
         var user = Meteor.user();
+        // console.log('user', user);
 
         /**
          * 验证用户权限,用户是否已登录
@@ -79,8 +80,8 @@ Meteor.methods({
         var userPrizesCount = UserPrizesList.find({userId: Meteor.userId(), activeId: config.activity}).count();
         console.log('userPrizesCount', userPrizesCount);
         if( userPrizesCount >= max || // 已使用次数大于最大可用次数
-            (!user.share && userPrizesCount) ||  // 没有分享过，但已经摇过一次
-            (user.share && (user.share + 1 > userPrizesCount) ) // 分享次数 + 1 大于等于最大可用次数
+            (!user.profile.share && userPrizesCount) ||  // 没有分享过，但已经摇过一次
+            (user.profile.share && (user.profile.share + 1 <= userPrizesCount) ) // 分享次数 + 1 大于等于最大可用次数
           ){
             throw new Meteor.Error(403, '您已没有机会');
         }
@@ -254,9 +255,9 @@ Meteor.methods({
        * 如果加1后的数据大于最大分享限制，则设置分享次数为最大限制
        * @type {[type]}
        */
-      var share = user.share || 0;
+      var share = user.profile.share || 0;
           share++;
           share = share >= maxNum - 1 ? maxNum - 1 : share;
-      return Meteor.users.update({_id: Meteor.userId}, {$set:{share: share}});
+      return Meteor.users.update({_id: Meteor.userId}, {$set:{'profile.share': share}});
     }
 });
