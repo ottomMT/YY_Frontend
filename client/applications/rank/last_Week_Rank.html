@@ -1,16 +1,18 @@
 <template name="lastWeekRank">
     <ul>
-        <li class="row">
-            <div>
-                <!--排名图标-->
-                <img src="/img/rank-one.png" alt="">
-            </div>
-            <!--用户昵称-->
-            <div class="name">阳光宝贝</div>
-            <!--摇奶瓶成绩-->
-            <div class="score">3.76</div>
-        </li>
-        <li class="row">
+      {{# each topList}}
+          <li class="row">
+              <div>
+                  <!--排名图标-->
+                  <img src="{{topImg(@index)}}" alt="">
+              </div>
+              <!--用户昵称-->
+              <div class="name">{{nickname}}</div>
+              <!--摇奶瓶成绩-->
+              <div class="score">{{formatTime(time)}}</div>
+          </li>
+      {{/each}}
+        <!-- <li class="row">
             <div>
                 <img src="/img/rank-two.png" alt="">
             </div>
@@ -23,6 +25,6 @@
             </div>
             <div class="name">梦妆</div>
             <div class="score">5.28</div>
-        </li>
+        </li> -->
     </ul>
 </template>

@@ -47,3 +47,13 @@ Template.rank.events({
 Template.rank.onRendered(function () {
     $("body").css({"backgroundImage": "url('/img/bg.jpg')","backgroundSize": "cover","backgroundRepeat": "no-repeat"});
 });
+
+/**
+ * 页面创建设置该页面分享内容
+ * 设置 session shareConfig 为该页面分享配置
+ * @param  {[type]} function( [description]
+ * @return {[type]}           [description]
+ */
+Template.rank.onCreated(function(){
+  WechatShare.rankConfig();
+});

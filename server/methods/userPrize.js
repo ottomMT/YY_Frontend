@@ -1,11 +1,15 @@
 /**
  * 用户摇奶瓶后发奖
  */
-
+var maxNum = 2;
 Meteor.methods({
-    
+
     shakeBbottle: function (config) {
         console.log('config', config);
+        if(!Sign.verify(config)){
+            throw new Meteor.Error(406, '签名错误');
+        }
+
         var user = Meteor.user();
 
         /**
@@ -71,9 +75,13 @@ Meteor.methods({
          * 验证用户是否还有摇奖机会
          * 取得用户该活动已获奖品的数量
          */
+        var max = activity.max || maxNum;
         var userPrizesCount = UserPrizesList.find({userId: Meteor.userId(), activeId: config.activity}).count();
         console.log('userPrizesCount', userPrizesCount);
-        if(userPrizesCount >= activity.max || (user.share && user.share + userPrizesCount <= activity.max )){
+        if( userPrizesCount >= max || // 已使用次数大于最大可用次数
+            (!user.share && userPrizesCount) ||  // 没有分享过，但已经摇过一次
+            (user.share && (user.share + 1 > userPrizesCount) ) // 分享次数 + 1 大于等于最大可用次数
+          ){
             throw new Meteor.Error(403, '您已没有机会');
         }
         console.log('Meteor.userId()', Meteor.userId());
@@ -83,7 +91,7 @@ Meteor.methods({
          */
         var remainPrizes = PrizeList.find({remain: {$gt: 0}, activeId: config.activity}).fetch();
         var prizeInfo = {};
-        console.log('remainPrizes', remainPrizes);
+        // console.log('remainPrizes', remainPrizes);
 
 
         /**
@@ -120,8 +128,6 @@ Meteor.methods({
             /**
              * 计算是否中了「大」奖,如果中了,直接返回该奖品,如果未中,则继续发放普通奖品
              */
-            console.log('probabilityPrizes', probabilityPrizes);
-            console.log('prizesBox', prizesBox.length);
             var myPrice = bigPrize(probabilityPrizes); // 几率中奖结果
             if(myPrice) {
                 return myPrice;
@@ -153,13 +159,13 @@ Meteor.methods({
              */
             function commonPrize(prizesBox) {
                 var allPrizes = prizesBox.sort(function (a, b) {
-                    return Math.random()>.5 ? -1 : 1;
+                    return Math.random()>0.5 ? -1 : 1;
                 });
-                console.log('allPrizes', allPrizes.length);
+                // console.log('allPrizes', allPrizes.length);
                 return allPrizes[Math.ceil(Math.random()*allPrizes.length) - 1];
             }
 
-            return commonPrize(prizesBox)
+            return commonPrize(prizesBox);
 
         }
         // console.time('in');
@@ -177,22 +183,80 @@ Meteor.methods({
                 prizeName: prizeInfo[prizeId].name,
                 use: false,
                 time: config.time,
+                nickname: user && user.profile && user.profile.wechat && user.profile.wechat.nickname || '',
                 getTime: new Date().getTime()
             });
         }
 
-        console.log('result', result, '   prizeInfo:', prizeInfo);
+        console.log('result', result);
         PrizeList.update({_id:result}, {$inc:{out:1, remain: -1}});
         insertUserPrize(result, config.activity);
         return prizeInfo[result];
-        // return result;
 
+    },
 
-        /**
-         * 返回结果
-         */
+    /**
+     * 本周排名
+     * @return {[type]} [description]
+     */
+    weekRank: function(){
+      var now = new Date(), // 当前时间
+          days =  3600*1000*24, // 一天的毫秒数
+          weekday = now.getDay(), // 当前周数
+          time = new Date(moment(now).format('YYYY-MM-DD 00:00:00')).getTime() , // 今天 00:00 时间戳
+          weekStart = time - ((weekday - 1) * days), // 开始时间 本周一 00:00
+          weekEnd = time + ((7 - weekday) * days); // 结束时间 下周一 00:00
+          // 查询大于本周开始，小于本周结束，的奖品。
+          // 只取需要展示的字段「time,prizeName,nickname, getTime」
+          return UserPrizesList.find({getTime:{$gt: weekStart, $lt: weekEnd}}, {sort: {time:1}, limit: 6, fields: {prizeName: 1, getTime: 1, time: 1, nickname: 1}}).fetch();
+    },
+    /**
+     * 上周排名
+     * @return {[type]} [description]
+     */
+    lastWeekRank: function(){
+      var now = new Date(), // 当前时间
+          days =  3600*1000*24, // 一天的毫秒数
+          weekday = now.getDay(), // 当前周数
+          time = new Date(moment(now).format('YYYY-MM-DD 00:00:00')).getTime() , // 今天 00:00 时间戳
+          weekEnd = time - ((weekday - 1) * days), // 结束时间 本周一 00:00
+          weekStart = weekEnd  -  (7 * days); // 开始时间 上周一 00:00
+          // 查询上周一开始，周本一技术的奖品
+          // 只取需要展示的字段「time,prizeName,nickname, getTime」
+          return UserPrizesList.find({getTime:{$gt: weekStart, $lt: weekEnd}}, {sort: {time:1}, limit: 3, fields: {prizeName: 1, getTime: 1, time: 1, nickname: 1}}).fetch();
+    },
 
-        return Meteor.user();
+    /**
+     * 分享次数加 1
+     * @return {[type]} [description]
+     */
+    share: function(config){
+      // 验证签名
+      if(!Sign.verify(config)){
+        throw new Meteor.Error(406, '签名错误');
+      }
+
+      var user = Meteor.user();
+
+      // 验证是否登录
+      if(!user){
+        throw new Meteor.Error(401, '您未登录,请登录后重试');
+      }
+
+      // 验证校验密钥
+      if(Share() !== config.share){
+        throw new Meteor.Error(405, '密钥校验失败');
+      }
+
+      /**
+       * 取得用户分享次数
+       * 分享次数加1.
+       * 如果加1后的数据大于最大分享限制，则设置分享次数为最大限制
+       * @type {[type]}
+       */
+      var share = user.share || 0;
+          share++;
+          share = share >= maxNum - 1 ? maxNum - 1 : share;
+      return Meteor.users.update({_id: Meteor.userId}, {$set:{share: share}});
     }
-    
 });
