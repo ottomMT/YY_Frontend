@@ -5,7 +5,7 @@
  */
 Template.weekRank.onCreated(function(){
 
-  Meteor.call('weekRank', function(error, result){
+  Meteor.call('weekRank', {_id: this.data._id}, function(error, result){
     console.log('onCreated', result);
     if(!error){
       Session.set('topList', result);
