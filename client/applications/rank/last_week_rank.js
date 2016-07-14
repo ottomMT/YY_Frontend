@@ -4,8 +4,8 @@
  * @return {[type]}           [description]
  */
 Template.lastWeekRank.onCreated(function(){
-
-  Meteor.call('lastWeekRank', function(error, result){
+  // console.log('this', this);
+  Meteor.call('lastWeekRank', {_id: this.data._id}, function(error, result){
     if(!error){
       Session.set('lastTopList', result);
     }
@@ -39,7 +39,7 @@ Template.lastWeekRank.helpers({
   /**
    * 显示当前排名图标
    * @param  {number} No 记录在数组中的索引 Index
-   * @return {string}    饭后排名对应的图标  
+   * @return {string}    饭后排名对应的图标
    */
   topImg: function(No){
     var top = ['/img/rank-one.png', '/img/rank-two.png', '/img/rank-three.png'];

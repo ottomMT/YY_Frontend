@@ -200,7 +200,7 @@ Meteor.methods({
      * 本周排名
      * @return {[type]} [description]
      */
-    weekRank: function(){
+    weekRank: function(query){
       var now = new Date(), // 当前时间
           days =  3600*1000*24, // 一天的毫秒数
           weekday = now.getDay(), // 当前周数
@@ -209,13 +209,13 @@ Meteor.methods({
           weekEnd = time + ((7 - weekday) * days); // 结束时间 下周一 00:00
           // 查询大于本周开始，小于本周结束，的奖品。
           // 只取需要展示的字段「time,prizeName,nickname, getTime」
-          return UserPrizesList.find({getTime:{$gt: weekStart, $lt: weekEnd}}, {sort: {time:1}, limit: 6, fields: {prizeName: 1, getTime: 1, time: 1, nickname: 1}}).fetch();
+          return UserPrizesList.find({getTime:{$gt: weekStart, $lt: weekEnd},  activeId: query._id, isTopPrize:{$ne: true}}, {sort: {time:1}, limit: 6, fields: {prizeName: 1, getTime: 1, time: 1, nickname: 1}}).fetch();
     },
     /**
      * 上周排名
      * @return {[type]} [description]
      */
-    lastWeekRank: function(){
+    lastWeekRank: function(query){
       var now = new Date(), // 当前时间
           days =  3600*1000*24, // 一天的毫秒数
           weekday = now.getDay(), // 当前周数
@@ -224,7 +224,7 @@ Meteor.methods({
           weekStart = weekEnd  -  (7 * days); // 开始时间 上周一 00:00
           // 查询上周一开始，周本一技术的奖品
           // 只取需要展示的字段「time,prizeName,nickname, getTime」
-          return UserPrizesList.find({getTime:{$gt: weekStart, $lt: weekEnd}}, {sort: {time:1}, limit: 3, fields: {prizeName: 1, getTime: 1, time: 1, nickname: 1}}).fetch();
+          return UserPrizesList.find({getTime:{$gt: weekStart, $lt: weekEnd}, activeId: query._id, isTopPrize:{$ne: true}}, {sort: {time:1}, limit: 3, fields: {prizeName: 1, getTime: 1, time: 1, nickname: 1}}).fetch();
     },
 
     /**

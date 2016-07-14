@@ -121,6 +121,15 @@ Template.shakeBottle.events({
      * 点击'摇奖品'按钮后模拟摇奶瓶结果出现效果
      */
     'click #start': function () {
+
+        if(Session.get('unStart')){
+          return shareModal('<p>活动未开始</p>', true);
+        }else if(Session.get('isEndding')){
+          return shareModal('<p>活动已结束</p>', true);
+        }else if(Session.get('isNone')){
+          return shareModal('<p>您已玩过</p>', true);
+        }
+
         Session.set('watching', true);
         $("#start").css('pointer-events','none');
         if (Session.get('watching')){
@@ -169,19 +178,87 @@ Template.shakeBottle.events({
     // }
 });
 
+
+Template.shakeBottle.onCreated(function(){
+  Session.set('activeId', this._id);
+});
+
 /**
  * 设置页面中温度计的初始温度
  */
 Template.shakeBottle.helpers({
     temperature:function () {
         Session.set('temperature', '8.3');
+    },
+    is404: function(){
+      return Session.set('is404', !this.activity);
+    },
+    id: function(){
+      return {_id: this._id};
+    },
+    /**
+     * 活动未开始
+     * 当前时间 小于 开始时间
+     * @return {boolean}
+     */
+    unStart: function(){
+      var time = Session.get('time'),
+          result = new Date(time) < new Date(this.activity && this.activity.startAt);
+          Session.set('unStart', result);
+      return result;
+    },
+    /**
+     * 活动已结束
+     * 当前时间大于 结束时间
+     * @return {boolean}
+     */
+    isEndding: function(){
+      var time = Session.get('time'),
+          result = new Date(time) > new Date(this.activity && this.activity.endAt);
+          Session.set('isEndding', result);
+      return result;
     }
 });
 
+    /**
+     * 提示框模块
+     * @param {string} html 显示内容
+     * @param {boolean} hideLine 是否隐藏提示线框
+     * @return {[type]} [description]
+     */
+    function shareModal(html, hideLine){
+        $("#share-modal").css('display','block').find('.content').html(html);
+        if(hideLine){
+          $("#share-modal .point-img").hide();
+        }else{
+          $("#share-modal .point-img").show();
+        }
+        setTimeout(function () {
+            $("#share-modal .center-square").removeClass("zoom");
+        },10);
+    }
 /**
+ *
  * 设置当前页面背景样式
  */
 Template.shakeBottle.onRendered(function () {
+
+  /**
+   * 验证活动状态，
+   * 如果活动已结束，或活动未开始。
+   * 显示提示框
+   */
+  function activityState(){
+    if(Session.get('is404')){
+      shareModal('<p>活动不存在</p>', true);
+    }else if(Session.get('unStart')){
+      shareModal('<p>活动未开始</p>', true);
+    }else if(Session.get('isEndding')){
+      shareModal('<p>活动已结束</p>', true);
+    }
+  }
+  activityState();
+
     $("body").css({"backgroundImage": "url('/img/bg.jpg')","backgroundSize": "cover","backgroundRepeat": "no-repeat"});
 
     /**
