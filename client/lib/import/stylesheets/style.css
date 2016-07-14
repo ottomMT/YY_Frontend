@@ -96,9 +96,10 @@ body{
 
 .shake{
   -webkit-animation-name:shake;
-  -webkit-animation-duration:0.8s;
+  /*-webkit-animation-duration:0.8s;*/
   -moz--name:shake;
-  -moz-animation-duration:0.8s;
+  /*-moz-animation-duration:0.8s;*/
+  -webkit-animation:shake 1s infinite linear ;
 }
 
 .shake-bottle .actions{
