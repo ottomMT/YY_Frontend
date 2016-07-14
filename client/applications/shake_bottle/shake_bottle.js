@@ -124,5 +124,5 @@ Template.shakeBottle.onRendered(function () {
  * @return {[type]}           [description]
  */
 Template.shakeBottle.onCreated(function(){
-  Session.set('shareConfig', WechatShare.shakeBottleConfig());
+  WechatShare.shakeBottleConfig();
 });

@@ -69,5 +69,5 @@ Template.myPrizeList.onRendered(function () {
  * @return {[type]}           [description]
  */
 Template.myPrizeList.onCreated(function(){
-  Session.set('shareConfig', WechatShare.myPrizeListConfig());
+  WechatShare.myPrizeListConfig();
 });

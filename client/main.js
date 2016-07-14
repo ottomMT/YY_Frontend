@@ -27,9 +27,7 @@ Meteor.startup(function () {
           wx.config(result);
           wx.ready(function(){
               Session.set('wx', true);
-              if(Session.get('shareConfig')){
-                WechatShare.regSNS(Session.get('shareConfig'));
-              }
+              WechatShare.registerSNS();
           });
 
         }

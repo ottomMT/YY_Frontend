@@ -55,5 +55,5 @@ Template.rank.onRendered(function () {
  * @return {[type]}           [description]
  */
 Template.rank.onCreated(function(){
-  Session.set('shareConfig', WechatShare.rankConfig());
+  WechatShare.rankConfig();
 });
