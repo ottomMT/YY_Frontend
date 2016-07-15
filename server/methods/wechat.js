@@ -16,13 +16,13 @@ Meteor.methods({
     check(query, Object);
     console.log('req.query', query);
     var response = getTokenResponse(query);
-    console.log('response', response);
+    // console.log('response', response);
     // 是否获取用户 openid，access_token 成功
     if(!response.openid || !response.access_token){
       throw new Meteor.Error(403, '获取用户 access_token 失败 !');
     }
     var info = getUserInfo(response.openid, response.openid);
-    console.log('info', info);
+    // console.log('info', info);
 
     // 用户信息
     if(info.error || !info.result){
@@ -34,7 +34,7 @@ Meteor.methods({
     if(info.subscribe == 0){
       throw new Meteor.Error(401, '未关注公众号 !');
     }
-    console.log('info', info);
+    // console.log('info', info);
 
     var openid = response.openid;
     var accessToken = response.access_token;
@@ -108,7 +108,7 @@ function getTokenResponse(query) {
  * @return {[type]}              [description]
  */
 function getIdentity(access_token, openid) {
-  console.log('getIdentity', 'accessToken:', access_token, 'openid', openid);
+  // console.log('getIdentity', 'accessToken:', access_token, 'openid', openid);
   try {
     var response = HTTP.get(
       "https://api.weixin.qq.com/sns/userinfo", {

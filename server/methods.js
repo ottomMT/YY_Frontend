@@ -4,7 +4,7 @@ Meteor.methods({
   },
   WeJSConfig: function (url) {
   var response = Async.runSync(function(done) {
-    console.log('url', url);
+    // console.log('url', url);
     WeApi.getJsConfig({
       debug: false,
       jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo', 'onMenuShareQZone'],

@@ -6,56 +6,81 @@ Session.setDefault('shakesCount', 0);
 Session.setDefault('sensitivity', 10);
 
 /**
+ * 监听摇晃成功后回调
  * without debounce, every actual user shake will fire the callback twice right away
  * @type {Function}
  */
 onShake = function onShake() {
     /**
      * 如果晃动监听未关闭,每晃动一次,晃动次数加一.
+     * 如果监听已关闭，直接返回.
      */
     if(Session.get('watching')){
         Session.set('shakesCount', Session.get('shakesCount') + 1);
+    }else {
+      return false;
     }
-
+    // 如果正在发奖，直接返回
     if(Session.get('getPrize')) return;
-    Session.set('start', new Date().getTime());
 
-    var TH = Session.get('temperature') - 0.3;
-    Session.set('temperature', TH);
-    var THRem = TH + "rem";
-    $('.temperature').css('height',THRem);
-    if(TH <= 3.5){
-        Session.set('watching', false);
+    /**
+     * 设置温度计高度
+     * 获取当前高度 - 3，然后重新设置高度。
+     * @param  {[type]} 'temperature' [description]
+     * @return {number}               当前温度
+     */
+    function temperature(){
+        var TH = Session.get('temperature') - 0.3;
+            Session.set('temperature', TH);
+        var THRem = TH + "rem";
+        $('.temperature').css('height',THRem);
+        console.log('TH', TH);
+        return TH;
+    }
+    // 如果到达40度，发开始发奖
+    if(temperature() <= 3.5){
+      getPrize(Session.get('watching'));
+      // shake.stopWatch();//停止监听摇晃
+    }
+    /**
+     * 获取奖品
+     * 设置获取奖品加载中状态
+     * 拼接发送参数
+     * 调用 shakeBbottle 接口
+     * @return {[type]} [description]
+     */
+    function getPrize(start){
         Session.set('getPrize', true);
-        var time = new Date() - Session.get('start'),
-            post = {time: time, activity: 'PqPbzWD3gzkDnC2tp'},
+        var time = new Date().getTime() - start,
+            post = {time: time, activity: Session.get('activeId')},
             sign = Sign.create(post);
-        console.log('post', post, 'sign: ', sign);
+
         post.sign = sign;
         Meteor.call('shakeBbottle', post, function (error, result) {
-
+            // 如果发生错误,显示错误信息
             if(error){
                 console.error('shakeBbottle error', error);
+                shareModal('<p>'+ error.reason +'</p>', true);
                 return ;
             }
             console.log('result', result);
+            // 显示奖品结果
             var user = Meteor.user(),
                 nickname = user.profile.wechat.nickname, //昵称
                 timeEnd = (time/1000).toFixed(2), // 摇晃时间
                 prize = result.name; // 奖品名称
-
+            // 显示奖品窗口
             $('#shake-result-modal .content').html('<p>恭喜您'+ nickname +'</p><p>本次摇奶瓶耗时为 '+ timeEnd +' 秒</p><p>得到'+ prize +'</p>');
             $("#shake-result-modal").css('display','block');
             setTimeout(function () {
                 $("#shake-result-modal .center-square").removeClass("zoom");
             },10);
+            Session.set('getPrize', false);
+            Session.set('watching', false);
 
         });
-        // $("#shake-result-modal").css('display','block');
-        // setTimeout(function () {
-        //     $("#shake-result-modal .center-square").removeClass("zoom");
-        // },10);
     }
+
 };
 // onShake = _.debounce(function onShake() {
 //     Session.set('shakesCount', Session.get('shakesCount') + 1);
@@ -78,6 +103,9 @@ Template.shakeBottle.events({
      * 用 click 事件模拟手机摇动时的奶瓶及温度计动画
      * 在温度到达40度时为用户发奖品
      */
+    // 'click .animation-square': function () {
+    //   onShake();
+    // },
     // 'click .animation-square': function () {
     //     if(Session.get('getPrize')) return;
     //     Session.set('shakesCount',Session.get('shakesCount')+1)
@@ -130,7 +158,11 @@ Template.shakeBottle.events({
           return shareModal('<p>您已玩过</p>', true);
         }
 
-        Session.set('watching', true);
+        // 正在摇奖中,或者发奖中
+        if(Session.get('watching') || Session.get('getPrize')){
+          return;
+        }
+        Session.set('watching', new Date().getTime());
         $("#start").css('pointer-events','none');
         if (Session.get('watching')){
             console.log("开始摇动");
@@ -158,6 +190,7 @@ Template.shakeBottle.events({
     'click #continue-shake': function () {
         // 隐藏摇奶瓶结果界面
         $("#shake-result-modal .center-square").addClass("zoom");
+        shareModal('<p>您已参与过一次啦!</p><p>分享到朋友圈</p><p>可增加一次机会呦</p>');
         setTimeout(function () {
             $("#shake-result-modal").css('display','none');
         },200);
@@ -180,7 +213,7 @@ Template.shakeBottle.events({
 
 
 Template.shakeBottle.onCreated(function(){
-  Session.set('activeId', this._id);
+  Session.set('activeId', this.data._id);
 });
 
 /**
@@ -220,23 +253,23 @@ Template.shakeBottle.helpers({
     }
 });
 
-    /**
-     * 提示框模块
-     * @param {string} html 显示内容
-     * @param {boolean} hideLine 是否隐藏提示线框
-     * @return {[type]} [description]
-     */
-    function shareModal(html, hideLine){
-        $("#share-modal").css('display','block').find('.content').html(html);
-        if(hideLine){
-          $("#share-modal .point-img").hide();
-        }else{
-          $("#share-modal .point-img").show();
-        }
-        setTimeout(function () {
-            $("#share-modal .center-square").removeClass("zoom");
-        },10);
+/**
+ * 提示框模块
+ * @param {string} html 显示内容
+ * @param {boolean} hideLine 是否隐藏提示线框
+ * @return {[type]} [description]
+ */
+function shareModal(html, hideLine){
+    $("#share-modal").css('display','block').find('.content').html(html);
+    if(hideLine){
+      $("#share-modal .point-img").hide();
+    }else{
+      $("#share-modal .point-img").show();
     }
+    setTimeout(function () {
+        $("#share-modal .center-square").removeClass("zoom");
+    },10);
+}
 /**
  *
  * 设置当前页面背景样式
