@@ -40,22 +40,6 @@ Template.myPrizeList.helpers({
 });
 
 /**
- * 关闭奖券的二维码弹层
- */
-Template.myPrizeList.events({
-    'click #close-button': function () {
-        $("#prizeQrCodeModal").animate({
-            opacity: 0
-        },300,function () {
-            $(this).css('display','none')
-        });
-        setTimeout(function () {
-            $(".qrcode-square canvas").remove();
-        },300);
-    }
-});
-
-/**
  * 设置当前页面背景样式
  */
 Template.myPrizeList.onRendered(function () {

@@ -51,7 +51,8 @@ body{
 
 /*摇奶瓶页面*/
 .shake-bottle .animation-square{
-   padding-top: 7.2rem;
+   /*padding-top: 7.2rem;*/
+  padding-top: 7rem;
 }
 .shake-bottle .bottle img{
   width: 5rem;
@@ -64,10 +65,12 @@ body{
 }
 .shake-bottle .thermometer{
   justify-content: flex-end;
+  -webkit-justify-content: flex-end;
   position: relative;
 }
 .shake-bottle .thermometer img{
   width: 3.6rem;
+  /*height: 10.7rem;*/
   height: auto;
   margin: 0 auto;
 }
@@ -103,7 +106,7 @@ body{
 }
 
 .shake-bottle .actions{
-  margin-top: 0.65rem;
+  margin-top: 0.4rem;
   padding: 0 0.6rem;
 }
 
@@ -136,6 +139,7 @@ body{
   /*padding-right: 0.5rem;*/
   margin-right: 0.35rem;
   padding-bottom: 0.6rem;
+  min-height: 9.4rem;
 }
 .rank .vertical-divider{
   /*justify-content: center;*/
@@ -302,6 +306,9 @@ body{
 }
 
 /*我的奖品列表界面样式*/
+.prize-list:focus{
+  outline: 0;
+}
 .my-prize-list .descon{
   font-size: 0.75rem;
   color: white;
