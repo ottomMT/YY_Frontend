@@ -175,7 +175,7 @@ Template.shakeBottle.events({
     /**
      * 点击弹层周边空白区域关闭弹层
      */
-    'click .modal': function () {
+    'click #close-share-modal-button': function () {
         $(".modal .center-square").addClass("zoom");
         setTimeout(function () {
             $(".modal").css('display','none');
@@ -214,6 +214,7 @@ Template.shakeBottle.events({
 
 Template.shakeBottle.onCreated(function(){
   Session.set('activeId', this.data._id);
+  Meteor.call('readActivity', this.data._id); // 统计阅读量
 });
 
 /**

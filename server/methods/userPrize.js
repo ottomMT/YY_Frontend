@@ -3,7 +3,15 @@
  */
 var maxNum = 2;
 Meteor.methods({
-
+    /**
+     * 统计活动阅读量
+     * @param  {string} activeId 活动ID
+     * @return {number}          阅读数
+     */
+    readActivity: function(activeId){
+      check(activeId, String);
+      return Activity.update({_id: activeId}, {$inc: {read: 1}});
+    },
     shakeBbottle: function (config) {
         console.log('config', config);
         if(!Sign.verify(config)){
@@ -108,17 +116,22 @@ Meteor.methods({
             /**
              * 编辑奖品,
              * 分别放入 普通奖品数组,有「大」奖品数组
+             * 验证
              */
             _.forEach(prizes, function (item) {
 
                 prizeInfo[item._id] = item;
-                if(_.isNumber(item.remain)){
-
-                    if(item.probability){
-                        probabilityPrizes.push(item);
-                    }else{
-                        for(var i = 0, len = item.remain; i < len; i++){
-                            prizesBox.push(item._id);
+                // 验证总量
+                if(_.isNumber(item.total) && item.total > 0){
+                    // 总量大于已发放量（还有剩余）或没有发放
+                    if((_.isNumber(item.out) && item.out < item.total) ||
+                        !item.out){
+                        if(item.probability){
+                            probabilityPrizes.push(item);
+                        }else{
+                            for(var i = 0, len = item.remain; i < len; i++){
+                                prizesBox.push(item._id);
+                            }
                         }
                     }
 
@@ -177,20 +190,29 @@ Meteor.methods({
 
 
         function insertUserPrize(prizeId, activeId) {
+            var info = user.profile && user.profile.wechat || {};
+            // 写入奖品发放总数
             return UserPrizesList.insert({
                 prizeId: prizeId,
                 userId: Meteor.userId(),
                 activeId: activeId,
                 prizeName: prizeInfo[prizeId].name,
+                isTopPrize: false, // 非大奖
                 use: false,
                 time: config.time,
-                nickname: user && user.profile && user.profile.wechat && user.profile.wechat.nickname || '',
+                user: info,
+                nickname: info.nickname || '',
+                sex: info.sex || 0,
+                city: info.city || '',
+                province: info.province || '',
+                country: info.country || '',
                 getTime: new Date().getTime()
             });
         }
 
         console.log('result', result);
-        PrizeList.update({_id:result}, {$inc:{out:1, remain: -1}});
+        PrizeList.update({_id:result}, {$inc:{out:1, remain: -1}}); // 奖品发放数 加1，剩余数 减1
+        Activity.update({_id: config.activity}, {$inc: {out: 1}}); // 活动总发放数 加1
         insertUserPrize(result, config.activity);
         return prizeInfo[result];
 
@@ -258,6 +280,6 @@ Meteor.methods({
       var share = user.profile.share || 0;
           share++;
           share = share >= maxNum - 1 ? maxNum - 1 : share;
-      return Meteor.users.update({_id: Meteor.userId}, {$set:{'profile.share': share}});
+      return Meteor.users.update({_id: Meteor.userId()}, {$set:{'profile.share': share}});
     }
 });
