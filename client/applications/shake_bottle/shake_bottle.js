@@ -171,7 +171,7 @@ Template.shakeBottle.events({
 
 
         //设置定时器
-        function myTimer(time, len, one, two) {
+        function myTimer(time, len, count, startGame) {
             var start = 0;
             $("#count-down").css("display","block");
             // console.log(arguments);
@@ -179,9 +179,9 @@ Template.shakeBottle.events({
                 start++;
                 if(start >= len){
                     clearInterval(fn);
-                    two();
+                    startGame();
                 }else{
-                    one(start-1);
+                    count(start-1);
                 }
 
             }, time);
@@ -199,25 +199,6 @@ Template.shakeBottle.events({
 
             console.log('执行完毕');
             $("#count-down-img").attr('src',"/img/go.png");
-
-            /**
-             * 解决 audio 在微信中的兼容性问题
-             */
-            // function autoPlayAudio1() {
-            //     wx.config({
-            //         // 配置信息, 即使不正确也能使用 wx.ready
-            //         debug: false,
-            //         appId: '',
-            //         timestamp: 1,
-            //         nonceStr: '',
-            //         signature: '',
-            //         jsApiList: []
-            //     });
-            //     wx.ready(function() {
-            //         document.getElementById('ready-go').play();
-            //     });
-            // }
-            // autoPlayAudio1();
 
             setTimeout(function () {
                 $("#count-down").hide();
@@ -307,8 +288,10 @@ function initStates(){
   Session.set('sensitivity', 15);
   Session.set('getPrize', false);
   Session.set('temperature', '8.3');
+    Session.set('lastConut', '0');
   // var THRem = TH + "rem";
   $('.temperature').css('height','8.3rem');
+    $('#count-down-img').attr('src',"/img/three.png");
   $("#start").css('pointer-events','auto');
 }
 
@@ -422,7 +405,6 @@ Template.shakeBottle.onRendered(function () {
      * 获取当前晃动次数和上一次晃动次数作比较
      * 如果当前晃动次数大于上一次晃动次数,给 .bottle 添加 shake 动画
      */
-    Session.setDefault('lastConut', 0);
     setInterval(function () {
         var currentCount = Session.get("shakesCount");
         var lastCount = Session.get('lastConut');
