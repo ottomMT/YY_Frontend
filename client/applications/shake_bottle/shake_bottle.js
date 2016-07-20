@@ -35,9 +35,10 @@ onShake = function onShake() {
         return TH;
     }
     // 如果到达40度，发开始发奖
-    if(temperature() <= 3.5){
+    if(temperature() <= 3.66){
       getPrize(Session.get('watching'));
-        $("body").append('<audio src="/audio/ding.mp3" autoplay="autoplay"></audio>');
+        document.getElementById("dingSound").play();
+        // $("body").append('<audio id="dingSound" src="/audio/ding.mp3" autoplay="autoplay"></audio>');
         // shake.stopWatch();//停止监听摇晃
     }
     /**
@@ -148,22 +149,24 @@ Template.shakeBottle.events({
      * 点击'摇奖品'按钮后模拟摇奶瓶结果出现效果
      */
     'click #start': function () {
-        console.log('tap #start');
-        if(Session.get('unStart')){
-          return shareModal('<p>活动未开始</p>', true);
-        }else if(Session.get('isEndding')){
-          return shareModal('<p>活动已结束</p>', true);
+        // autoPlayAudio1();
 
-        }else if(Session.get('isNone') && Session.get('playCount') === 1){
-          return shareModal('<p>您已参与过一次啦!</p><p>分享到朋友圈</p><p>可增加一次机会呦</p>');
-        }else if(Session.get('isNone')){
-          return shareModal('<p>您已玩过</p>', true);
-        }
-
-        // 正在摇奖中,或者发奖中
-        if(Session.get('watching') || Session.get('getPrize')){
-          return;
-        };
+        // console.log('tap #start');
+        // if(Session.get('unStart')){
+        //   return shareModal('<p>活动未开始</p>', true);
+        // }else if(Session.get('isEndding')){
+        //   return shareModal('<p>活动已结束</p>', true);
+        //
+        // }else if(Session.get('isNone') && Session.get('playCount') === 1){
+        //   return shareModal('<p>您已参与过一次啦!</p><p>分享到朋友圈</p><p>可增加一次机会呦</p>');
+        // }else if(Session.get('isNone')){
+        //   return shareModal('<p>您已玩过</p>', true);
+        // }
+        //
+        // // 正在摇奖中,或者发奖中
+        // if(Session.get('watching') || Session.get('getPrize')){
+        //   return;
+        // };
 
         //显示摇奶瓶开始倒计时
 
@@ -302,7 +305,7 @@ function initStates(){
   console.log('initStates');
   Session.set('watching', false);
   Session.set('shakesCount', 0);
-  Session.set('sensitivity', 10);
+  Session.set('sensitivity', 15);
   Session.set('getPrize', false);
   Session.set('temperature', '8.3');
   // var THRem = TH + "rem";
@@ -314,9 +317,9 @@ function initStates(){
  * 设置页面中温度计的初始温度
  */
 Template.shakeBottle.helpers({
-    temperature:function () {
-        Session.set('temperature', '8.3');
-    },
+    // temperature:function () {
+    //     Session.set('temperature', '8.3');
+    // },
     is404: function(){
       return Session.set('is404', !this.activity);
     },
@@ -428,26 +431,56 @@ Template.shakeBottle.onRendered(function () {
         if ( currentCount > lastCount ){
             // var audio = new Audio('/img/ready-go.mp3');
             // audio.play();
-            if( lastCount%2 > 0){
-                document.getElementById('shake-sound').play();
-            } else{
-                document.getElementById('shake-sound2').play();
-            };
-            $("body").append('');
-            console.log("???");
+            // if( lastCount%2 > 0){
+            //     document.getElementById('shake-sound').play();
+            // } else{
+            //     document.getElementById('shake-sound2').play();
+            // };
             $(".bottle").addClass("shake");
             Session.set('lastConut', currentCount);
+
+            // 播放声音
+            document.getElementById("long-shake-sound").play();
         } else {
             // $("#shake-sound").remove();
-            document.getElementById('shake-sound').pause();
+            // document.getElementById('shake-sound2').pause();
+            // document.getElementById('shake-sound').pause();
             $(".bottle").removeClass("shake");
+            // 停止播放声音
+            document.getElementById("long-shake-sound").pause();
         }
-    },500);
+    },1000);
 
+    // Session.setDefault('soundLastCount',0);
+    // setInterval(function () {
+    //     var soundLastCount = Session.get('soundLastCount');
+    //     var currentCount = Session.get('shakesCount');
+    //     if( currentCount > soundLastCount ){
+    //         document.getElementById("long-shake-sound").play();
+    //         Session.set('soundLastCount',currentCount);
+    //     } else {
+    //         document.getElementById("long-shake-sound").pause();
+    //     }
+    // },800);
 
-
-
-
+    // 解决 iphone 中声音不能播放的问题
+    // function autoPlayAudio1() {
+    //     wx.config({
+    //         // 配置信息, 即使不正确也能使用 wx.ready
+    //         debug: false,
+    //         appId: '',
+    //         timestamp: 1,
+    //         nonceStr: '',
+    //         signature: '',
+    //         jsApiList: []
+    //     });
+    //     wx.ready(function() {
+    //         console.log("声音");
+    //         document.getElementById('play').play();
+    //     });
+    // };
+    //
+    // autoPlayAudio1();
 });
 
 /**

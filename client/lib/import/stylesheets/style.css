@@ -68,6 +68,7 @@ body{
   -webkit-justify-content: flex-end;
   position: relative;
   align-items: flex-end;
+  -webkit-align-items: flex-end;
   margin-right: 2.75rem;
 }
 .shake-bottle .thermometer img{
