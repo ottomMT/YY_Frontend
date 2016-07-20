@@ -70,6 +70,6 @@ Template.myPrizeItem.events({
         $("#prizeQrCodeModal .prize-name").text(this.prizeName);
         $("#prizeQrCodeModal").css('display','block').animate({
             opacity: 1
-        },300);
+        },200);
     }
 });

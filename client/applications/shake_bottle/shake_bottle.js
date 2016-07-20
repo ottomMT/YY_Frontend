@@ -40,7 +40,8 @@ onShake = function onShake() {
     // 如果到达40度，发开始发奖
     if(temperature() <= 3.5){
       getPrize(Session.get('watching'));
-      // shake.stopWatch();//停止监听摇晃
+        $("body").append('<audio src="/audio/ding.mp3" autoplay="autoplay"></audio>');
+        // shake.stopWatch();//停止监听摇晃
     }
     /**
      * 获取奖品
@@ -154,6 +155,13 @@ Template.shakeBottle.events({
           return shareModal('<p>活动未开始</p>', true);
         }else if(Session.get('isEndding')){
           return shareModal('<p>活动已结束</p>', true);
+        }else if(Session.get('hasChance')){
+            $("#share-modal").css('display','block');
+            $("#share-modal .point-img").show();
+            setTimeout(function () {
+                $("#share-modal .center-square").removeClass("zoom");
+            },10);
+            return;
         }else if(Session.get('isNone')){
           return shareModal('<p>您已玩过</p>', true);
         }
@@ -161,27 +169,85 @@ Template.shakeBottle.events({
         // 正在摇奖中,或者发奖中
         if(Session.get('watching') || Session.get('getPrize')){
           return;
-        }
-        Session.set('watching', new Date().getTime());
-        $("#start").css('pointer-events','none');
-        if (Session.get('watching')){
-            console.log("开始摇动");
-            shake.startWatch(onShake, Session.get('sensitivity'));
-        } else {
-            console.log("停止摇动");
-            shake.stopWatch();
-        }
+        };
+
+        //显示摇奶瓶开始倒计时
+
+
+        //设置定时器
+        function myTimer(time, len, one, two) {
+            var start = 0;
+            $("#count-down").css("display","block");
+            // console.log(arguments);
+            var fn = setInterval(function () {
+                start++;
+                if(start >= len){
+                    clearInterval(fn);
+                    two();
+                }else{
+                    one(start-1);
+                }
+
+            }, time);
+        };
+
+        var imgDisplay = ['/img/two.png','/img/one.png'];
+        myTimer(1000, 3, function (index) {
+           console.log(index);
+            $("#count-down-img").attr('src',imgDisplay[index]);
+            if(index == 0){
+                $("body").append('<audio id="ready-go" src="/audio/ready-go.mp3" autoplay="autoplay"></audio>');
+
+            }
+        }, function () {
+
+            console.log('执行完毕');
+            $("#count-down-img").attr('src',"/img/go.png");
+
+            /**
+             * 解决 audio 在微信中的兼容性问题
+             */
+            // function autoPlayAudio1() {
+            //     wx.config({
+            //         // 配置信息, 即使不正确也能使用 wx.ready
+            //         debug: false,
+            //         appId: '',
+            //         timestamp: 1,
+            //         nonceStr: '',
+            //         signature: '',
+            //         jsApiList: []
+            //     });
+            //     wx.ready(function() {
+            //         document.getElementById('ready-go').play();
+            //     });
+            // }
+            // autoPlayAudio1();
+
+            setTimeout(function () {
+                $("#count-down").hide();
+            },1000);
+            Session.set('watching', new Date().getTime());
+            $("#start").css('pointer-events','none');
+            if (Session.get('watching')){
+                console.log("开始摇动");
+                shake.startWatch(onShake, Session.get('sensitivity'));
+            } else {
+                console.log("停止摇动");
+                shake.stopWatch();
+            }
+        });
+
     },
     /**
      * 点击弹层周边空白区域关闭弹层
      */
-    'click .modal': function () {
-        $(".modal .center-square").addClass("zoom");
-        setTimeout(function () {
-            $(".modal").css('display','none');
-        },200);
-        // $(".modal").css('display','none').find(".center-square").addClass("zoom");
-    },
+    // 'click .modal': function () {
+    //     $(".modal .center-square").addClass("zoom");
+    //     setTimeout(function () {
+    //         $(".modal").css('display','none');
+    //     },200);
+    //     // $(".modal").css('display','none').find(".center-square").addClass("zoom");
+    // },
     /**
      * 点击不满足继续摇后模拟分享界面弹出效果
      * 返回的 false 值目的是阻止事件冒泡
@@ -270,13 +336,15 @@ function shareModal(html, hideLine){
         $("#share-modal .center-square").removeClass("zoom");
     },10);
 }
-/**
- *
- * 设置当前页面背景样式
- */
-Template.shakeBottle.onRendered(function () {
 
-  /**
+
+Template.shakeBottle.onRendered(function () {
+    /**
+     * 设置当前页面背景样式
+     */
+    $("body").css({"backgroundImage": "url('/img/bg.jpg')","backgroundSize": "cover","backgroundRepeat": "no-repeat"});
+
+    /**
    * 验证活动状态，
    * 如果活动已结束，或活动未开始。
    * 显示提示框
@@ -292,7 +360,16 @@ Template.shakeBottle.onRendered(function () {
   }
   activityState();
 
-    $("body").css({"backgroundImage": "url('/img/bg.jpg')","backgroundSize": "cover","backgroundRepeat": "no-repeat"});
+    /**
+     * 验证用户是否还可通过分享获得参与机会,如果可以则显示分享提示弹层
+     */
+    // if(Session.get(hasChance)){
+    //     $("#share-modal").css('display','block');
+    //     $("#share-modal .point-img").show();
+    //     setTimeout(function () {
+    //         $("#share-modal .center-square").removeClass("zoom");
+    //     },10);
+    // }
 
     /**
      * 通过检测 shakesCount (摇动次数) 值是否增加来决定奶瓶是否需要晃动
@@ -303,14 +380,30 @@ Template.shakeBottle.onRendered(function () {
     setInterval(function () {
         var currentCount = Session.get("shakesCount");
         var lastCount = Session.get('lastConut');
-
+        console.log("执行了");
         if ( currentCount > lastCount ){
+            // var audio = new Audio('/img/ready-go.mp3');
+            // audio.play();
+            if( lastCount%2 > 0){
+                document.getElementById('shake-sound').play();
+            } else{
+                document.getElementById('shake-sound2').play();
+            };
+            $("body").append('');
+            console.log("???");
             $(".bottle").addClass("shake");
             Session.set('lastConut', currentCount);
         } else {
+            // $("#shake-sound").remove();
+            document.getElementById('shake-sound').pause();
             $(".bottle").removeClass("shake");
         }
-    },1000);
+    },500);
+
+
+
+
+
 });
 
 /**

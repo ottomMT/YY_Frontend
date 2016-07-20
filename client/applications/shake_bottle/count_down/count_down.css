@@ -1,0 +1,19 @@
+.dimmer{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0,0,0,0.3);
+    display: none;
+}
+.count-down{
+    text-align: center;
+    margin-top: 6rem;
+}
+.count-down img{
+    /*width: 5rem;*/
+    /*height: auto;*/
+    width: auto;
+    height: 5rem;
+}

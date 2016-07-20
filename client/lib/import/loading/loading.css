@@ -1,6 +1,6 @@
 .loading-message {
   color: #fff;
-  font-size: 0.54rem;
+  font-size: .6rem;
   font-weight: 300;
   font-family: sans-serif;
 }
@@ -17,4 +17,10 @@
 
 .sk-spinner > .sk-cube {
   background-color: #fff;
+}
+
+.pg-loading-logo-header img{
+  width: 5rem;
+  height: auto;
+  margin-bottom: .4rem;
 }

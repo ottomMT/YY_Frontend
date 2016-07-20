@@ -57,8 +57,8 @@ body{
 .shake-bottle .bottle img{
   width: 5rem;
   height: auto;
-  margin: 0 auto;
-
+  margin-left: 2.75rem;
+  /*margin: 0 auto;*/
   /*position: absolute;*/
   /*top: 2.5rem;*/
   /*right: 3rem;*/
@@ -67,12 +67,14 @@ body{
   justify-content: flex-end;
   -webkit-justify-content: flex-end;
   position: relative;
+  align-items: flex-end;
+  margin-right: 2.75rem;
 }
 .shake-bottle .thermometer img{
   width: 3.6rem;
   /*height: 10.7rem;*/
   height: auto;
-  margin: 0 auto;
+  /*margin: 0 auto;*/
 }
 .temperature{
   background-color: #FF4B71;
@@ -80,7 +82,7 @@ body{
   height: 8.2rem;
   position: absolute;
   bottom: 2.24rem;
-  left: 3.18rem;
+  /*left: 3.18rem;*/
   border-top-left-radius: 0.3rem;
   border-top-right-radius: 0.3rem;
 
@@ -88,7 +90,7 @@ body{
   -moz-transition: 0.2s;	/* Firefox 4 */
   -webkit-transition: 0.2s;	/* Safari 和 Chrome */
   -o-transition: 0.3s;	/* Opera */
-
+  right: 2.09rem;
 }
 /*奶瓶晃动效果*/
 @-webkit-keyframes shake {

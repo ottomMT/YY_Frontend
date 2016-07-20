@@ -1,8 +1,8 @@
 Template.loading.rendered = function () {
   if ( ! Session.get('loadingSplash') ) {
     this.loading = window.pleaseWait({
-      logo: '/img/logo.jpg',
-      backgroundColor: '#7f8c8d',
+      logo: '/img/loading.png',
+      backgroundColor: '#FFA9AE',
       loadingHtml: message + spinner
     });
     Session.set('loadingSplash', true); // just show loading splash once

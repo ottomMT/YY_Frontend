@@ -31,6 +31,9 @@
                 </a>
             </div>
         </div>
+        <!--奶瓶欢动音效-->
+        <audio id="shake-sound" src="/audio/shake.mp3" loop="loop"></audio>
+        <audio id="shake-sound2" src="/audio/shake.mp3" loop="loop"></audio>
     </div>
     <!--shake 测试区-->
     <!--<div class="test">-->
@@ -42,4 +45,8 @@
     {{> shakeResultModal}}
     <!--分享弹层-->
     {{> shareModal}}
+    <!--发奖前的加载中界面-->
+    <!--{{> awardLoading}}-->
+    <!--倒计时弹层-->
+    {{> countDown}}
 </template>
