@@ -3,12 +3,14 @@
         <div class="center-square zoom">
             <div class="content">
                 <!--用户昵称-->
-                <p>啦啦妈妈</p>
-                <p>您的最高纪录为</p>
-                <!--摇奶瓶成绩-->
-                <p>23.87 秒</p>
-                <!--名次-->
-                <p>当前位居 21 名</p>
+                <p>{{name}}</p>
+                {{#each myRank}}
+                  <p>您第{{week}}周最高纪录为</p>
+                  <!--摇奶瓶成绩-->
+                  <p>{{formatTime(time)}} 秒</p>
+                  <!--名次-->
+                  <p>位居第 {{top}} 名</p>
+                {{/each}}
             </div>
             <div class="row">
                 <div class="column">

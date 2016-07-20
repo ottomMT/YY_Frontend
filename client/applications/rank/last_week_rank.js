@@ -44,5 +44,13 @@ Template.lastWeekRank.helpers({
   topImg: function(No){
     var top = ['/img/rank-one.png', '/img/rank-two.png', '/img/rank-three.png'];
     return top[No];
+  },
+  /**
+   * 是否含有获奖列表
+   * @return {[type]} [description]
+   */
+  hasTop: function(){
+    var lastTopList = Session.get('lastTopList');
+    return lastTopList && lastTopList.length ? true : false;
   }
 });
