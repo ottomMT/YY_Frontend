@@ -149,24 +149,23 @@ Template.shakeBottle.events({
      * 点击'摇奖品'按钮后模拟摇奶瓶结果出现效果
      */
     'click #start': function () {
-        // autoPlayAudio1();
 
-        // console.log('tap #start');
-        // if(Session.get('unStart')){
-        //   return shareModal('<p>活动未开始</p>', true);
-        // }else if(Session.get('isEndding')){
-        //   return shareModal('<p>活动已结束</p>', true);
-        //
-        // }else if(Session.get('isNone') && Session.get('playCount') === 1){
-        //   return shareModal('<p>您已参与过一次啦!</p><p>分享到朋友圈</p><p>可增加一次机会呦</p>');
-        // }else if(Session.get('isNone')){
-        //   return shareModal('<p>您已玩过</p>', true);
-        // }
-        //
-        // // 正在摇奖中,或者发奖中
-        // if(Session.get('watching') || Session.get('getPrize')){
-        //   return;
-        // };
+        console.log('tap #start');
+        if(Session.get('unStart')){
+          return shareModal('<p>活动未开始</p>', true);
+        }else if(Session.get('isEndding')){
+          return shareModal('<p>活动已结束</p>', true);
+
+        }else if(Session.get('isNone') && Session.get('playCount') === 1){
+          return shareModal('<p>您已参与过一次啦!</p><p>分享到朋友圈</p><p>可增加一次机会呦</p>');
+        }else if(Session.get('isNone')){
+          return shareModal('<p>您已玩过</p>', true);
+        }
+
+        // 正在摇奖中,或者发奖中
+        if(Session.get('watching') || Session.get('getPrize')){
+          return;
+        };
 
         //显示摇奶瓶开始倒计时
 

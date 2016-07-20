@@ -307,6 +307,10 @@ body{
   width: 4.2rem;
   height: auto;
 }
+#shake-result-modal .column{
+  align-items: center;
+  -webkit-align-items: center;
+}
 
 /*我的奖品列表界面样式*/
 .prize-list:focus{
