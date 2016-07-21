@@ -49,15 +49,28 @@ Template.rank.helpers({
   hasDivider: function(){
     var topList = Session.get('topList'),
         lastTopList = Session.get('lastTopList');
-    return topList && topList.length && lastTopList && lastTopList.length ? true : false;
+        var isHasDivider = topList && topList.length && lastTopList && lastTopList.length ? true : false;
+    return isHasDivider;
   }
 });
 
-/**
- * 设置当前页面背景样式
- */
 Template.rank.onRendered(function () {
+    /**
+     * 设置当前页面背景样式
+     */
     $("body").css({"backgroundImage": "url('/img/bg.jpg')","backgroundSize": "cover","backgroundRepeat": "no-repeat"});
+
+    /**
+     * 如果排名页面只有一个栏目则让这个栏目中的标题内容长度增长
+     */
+    var topList = Session.get('topList'),
+        lastTopList = Session.get('lastTopList');
+    var isHasDivider = topList && topList.length && lastTopList && lastTopList.length ? true : false;
+
+    if (!isHasDivider){
+        $(".rank .week-rank .name").css("width", "10rem");
+        $(".rank .last-week-rank .name").css("width", "10rem");
+    }
 });
 
 /**

@@ -185,6 +185,7 @@ body{
 .rank .week-rank .num{
   margin-left: 0.4rem;
   color: #FFEF09;
+  margin-right: 0.3rem;
 }
 .rank .last-week-rank .th-title{
   justify-content: flex-end;

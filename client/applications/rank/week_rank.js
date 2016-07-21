@@ -11,7 +11,6 @@ Template.weekRank.onCreated(function(){
       Session.set('topList', result);
     }
   });
-
 });
 
 /**
