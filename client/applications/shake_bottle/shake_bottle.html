@@ -32,22 +32,19 @@
             </div>
         </div>
 
+        <!--点击摇奖品后的音效-->
+        <audio id="ready-go" src="/audio/ready-go.mp3" preload="auto"></audio>
         <!--发奖时的声音提示-->
         <audio id="dingSound" preload="auto" src="/audio/ding.mp3"></audio>
         <!--奶瓶晃动音效-->
         <audio id="long-shake-sound" preload="auto" src="/audio/long-shake.mp3" loop="loop"></audio>
-        <!--<audio id="shake-sound1" src="/audio/shake.mp3" loop="loop"></audio>-->
-        <!--<audio id="shake-sound2" src="/audio/shake.mp3" loop="loop"></audio>-->
-
-        <!--<audio id="shake-sound3" src="/audio/shake.mp3" loop="loop"></audio>-->
-
-        <!--<audio id="shake-sound4" src="/audio/shake.mp3" loop="loop"></audio>-->
-
     </div>
-    <!--shake 测试区-->
+    <!--shake 晃动灵敏度测试区-->
     <!--<div class="test">-->
         <!--<div>摇动次数:{{shakes}}</div>-->
+        <!--<div>真实摇动次数:{{shakeCount}}</div>-->
         <!--<div>是否开始:{{watching}}</div>-->
+        <!--<div>灵敏度:{{sens}}</div>-->
     <!--</div>-->
     <p style="display:none">{{unStart}} {{isEndding}} {{is404}}</p>
     <!--摇奶瓶成绩显示弹层-->

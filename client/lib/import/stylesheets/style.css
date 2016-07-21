@@ -147,6 +147,9 @@ body{
 .rank .vertical-divider{
   /*justify-content: center;*/
   border-right: 1px dashed white;
+
+  margin-top: .6rem;
+  height: 8.2rem;
 }
 /*.rank .vertical-divider .line{*/
   /*border-right: 1px dashed white;*/

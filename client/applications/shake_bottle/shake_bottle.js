@@ -1,7 +1,7 @@
 /**
  *  配置 shake.js 基础信息
  */
-
+Session.setDefault('counts',0);
 /**
  * 监听摇晃成功后回调
  * without debounce, every actual user shake will fire the callback twice right away
@@ -12,6 +12,7 @@ onShake = function onShake() {
      * 如果晃动监听未关闭,每晃动一次,晃动次数加一.
      * 如果监听已关闭，直接返回.
      */
+    Session.set('counts',Session.get('counts')+1);
     if(Session.get('watching')){
         Session.set('shakesCount', Session.get('shakesCount') + 1);
     }else {
@@ -27,7 +28,7 @@ onShake = function onShake() {
      * @return {number}               当前温度
      */
     function temperature(){
-        var TH = Session.get('temperature') - 0.3;
+        var TH = Session.get('temperature') - 0.03;
             Session.set('temperature', TH);
         var THRem = TH + "rem";
         $('.temperature').css('height',THRem);
@@ -39,7 +40,7 @@ onShake = function onShake() {
       getPrize(Session.get('watching'));
         document.getElementById("dingSound").play();
         // $("body").append('<audio id="dingSound" src="/audio/ding.mp3" autoplay="autoplay"></audio>');
-        // shake.stopWatch();//停止监听摇晃
+        shake.stopWatch();//停止监听摇晃
     }
     /**
      * 获取奖品
@@ -87,14 +88,20 @@ onShake = function onShake() {
 // }, 750, true);  // fire the shake as soon as it occurs, but not again if less than 750ms have passed; 500 was too little
 
 /**
- * 程序测试用代码,暂时请勿删除,后期用来调试晃动灵敏度
+ * 程序测试用代码,暂时请勿删除,用来调试晃动灵敏度
  */
 // Template.shakeBottle.helpers({
 //     shakes: function () {
 //         return Session.get('shakesCount');
 //     },
+//     shakeCount: function () {
+//         return Session.get('counts');
+//     },
 //     watching: function () {
 //         return Session.get('watching').toString();
+//     },
+//     sens: function () {
+//         return Session.get('sensitivity').toString();
 //     }
 // });
 
@@ -107,43 +114,79 @@ Template.shakeBottle.events({
     //   onShake();
     // },
     // 'click .animation-square': function () {
+    //     /**
+    //      * 如果晃动监听未关闭,每晃动一次,晃动次数加一.
+    //      * 如果监听已关闭，直接返回.
+    //      */
+    //     if(Session.get('watching')){
+    //         Session.set('shakesCount', Session.get('shakesCount') + 1);
+    //     }else {
+    //         return false;
+    //     }
+    //     // 如果正在发奖，直接返回
     //     if(Session.get('getPrize')) return;
-    //     Session.set('shakesCount',Session.get('shakesCount')+1)
-    //     Session.set('start', new Date().getTime());
-    //     // $(".bottle").addClass("shake");
     //
-    //     var TH = Session.get('temperature') - 0.1;
-    //     Session.set('temperature', TH);
-    //     var THRem = TH + "rem";
-    //     $('.temperature').css('height',THRem);
-    //     if(TH <= 3.5){
-    //
+    //     /**
+    //      * 设置温度计高度
+    //      * 获取当前高度 - 3，然后重新设置高度。
+    //      * @param  {[type]} 'temperature' [description]
+    //      * @return {number}               当前温度
+    //      */
+    //     function temperature(){
+    //         var TH = Session.get('temperature') - 0.3;
+    //         Session.set('temperature', TH);
+    //         var THRem = TH + "rem";
+    //         $('.temperature').css('height',THRem);
+    //         console.log('TH', TH);
+    //         return TH;
+    //     }
+    //     // 如果到达40度，发开始发奖
+    //     if(temperature() <= 3.66){
+    //         getPrize(Session.get('watching'));
+    //         document.getElementById("dingSound").play();
+    //         // $("body").append('<audio id="dingSound" src="/audio/ding.mp3" autoplay="autoplay"></audio>');
+    //         // shake.stopWatch();//停止监听摇晃
+    //     }
+    //     /**
+    //      * 获取奖品
+    //      * 设置获取奖品加载中状态
+    //      * 拼接发送参数
+    //      * 调用 shakeBbottle 接口
+    //      * @return {[type]} [description]
+    //      */
+    //     function getPrize(start){
     //         Session.set('getPrize', true);
-    //         var time = new Date() - Session.get('start');
-    //         Meteor.call('shakeBbottle', {time: time, activity: 'PqPbzWD3gzkDnC2tp'}, function (error, result) {
+    //         var time = new Date().getTime() - start,
+    //             post = {time: time, activity: Session.get('activeId')},
+    //             sign = Sign.create(post);
+    //
+    //         post.sign = sign;
+    //         Meteor.call('shakeBbottle', post, function (error, result) {
+    //             // 如果发生错误,显示错误信息
+    //             if(error){
+    //                 console.error('shakeBbottle error', error);
+    //                 shareModal('<p>'+ error.reason +'</p>', true);
+    //                 return ;
+    //             }
+    //             console.log('result', result);
+    //             // 显示奖品结果
     //             var user = Meteor.user(),
     //                 nickname = user.profile.wechat.nickname, //昵称
     //                 timeEnd = (time/1000).toFixed(2), // 摇晃时间
-    //                 prize = result.prizeName; // 奖品名称
-    //
+    //                 prize = result.name; // 奖品名称
+    //             // 显示奖品窗口
     //             $('#shake-result-modal .content').html('<p>恭喜您'+ nickname +'</p><p>本次摇奶瓶耗时为 '+ timeEnd +' 秒</p><p>得到'+ prize +'</p>');
     //             $("#shake-result-modal").css('display','block');
     //             setTimeout(function () {
     //                 $("#shake-result-modal .center-square").removeClass("zoom");
     //             },10);
     //
+    //             // 重置所有状态，马上开始下一次摇奖
+    //             initStates();
+    //
     //         });
-    //         // $("#shake-result-modal").css('display','block');
-    //         // setTimeout(function () {
-    //         //     $("#shake-result-modal .center-square").removeClass("zoom");
-    //         // },10);
     //     }
-    //     // var TH = temperature - 1;
-    //     // console.log('this.tem', temperature);
-    //     // console.log('this', this);
-    //     // this.temperature--;
-    //     // var THRem = TH + "rem";
-    //     // $(".temperature").css("height", THRem);
+    //
     // },
     /**
      * 点击'摇奖品'按钮后模拟摇奶瓶结果出现效果
@@ -167,8 +210,8 @@ Template.shakeBottle.events({
           return;
         };
 
-        //显示摇奶瓶开始倒计时
 
+        //显示摇奶瓶开始倒计时
 
         //设置定时器
         function myTimer(time, len, count, startGame) {
@@ -189,15 +232,12 @@ Template.shakeBottle.events({
 
         var imgDisplay = ['/img/two.png','/img/one.png'];
         myTimer(1000, 3, function (index) {
-           console.log(index);
             $("#count-down-img").attr('src',imgDisplay[index]);
             if(index == 0){
-                $("body").append('<audio id="ready-go" src="/audio/ready-go.mp3" autoplay="autoplay"></audio>');
-
+                document.getElementById("ready-go").play();
+                // $("body").append('<audio id="ready-go" src="/audio/ready-go.mp3" autoplay="autoplay"></audio>');
             }
         }, function () {
-
-            console.log('执行完毕');
             $("#count-down-img").attr('src',"/img/go.png");
 
             setTimeout(function () {
@@ -207,7 +247,10 @@ Template.shakeBottle.events({
             $("#start").css('pointer-events','none');
             if (Session.get('watching')){
                 console.log("开始摇动");
-                shake.startWatch(onShake, Session.get('sensitivity'));
+                shake.startWatch(onShake, {
+                    threshold: Session.get('sensitivity'),
+                    timeout: 0
+                });
             } else {
                 console.log("停止摇动");
                 shake.stopWatch();
@@ -293,15 +336,12 @@ function initStates(){
   $('.temperature').css('height','8.3rem');
     $('#count-down-img').attr('src',"/img/three.png");
   $("#start").css('pointer-events','auto');
+
+    // shake.stopWatch();
 }
 
-/**
- * 设置页面中温度计的初始温度
- */
+
 Template.shakeBottle.helpers({
-    // temperature:function () {
-    //     Session.set('temperature', '8.3');
-    // },
     is404: function(){
       return Session.set('is404', !this.activity);
     },
@@ -388,18 +428,6 @@ Template.shakeBottle.onRendered(function () {
     }
   }
   activityState();
-
-    /**
-     * 验证用户是否还可通过分享获得参与机会,如果可以则显示分享提示弹层
-     */
-    // if(Session.get(hasChance)){
-    //     $("#share-modal").css('display','block');
-    //     $("#share-modal .point-img").show();
-    //     setTimeout(function () {
-    //         $("#share-modal .center-square").removeClass("zoom");
-    //     },10);
-    // }
-
     /**
      * 通过检测 shakesCount (摇动次数) 值是否增加来决定奶瓶是否需要晃动
      * 获取当前晃动次数和上一次晃动次数作比较
@@ -410,58 +438,18 @@ Template.shakeBottle.onRendered(function () {
         var lastCount = Session.get('lastConut');
         console.log("执行了");
         if ( currentCount > lastCount ){
-            // var audio = new Audio('/img/ready-go.mp3');
-            // audio.play();
-            // if( lastCount%2 > 0){
-            //     document.getElementById('shake-sound').play();
-            // } else{
-            //     document.getElementById('shake-sound2').play();
-            // };
             $(".bottle").addClass("shake");
             Session.set('lastConut', currentCount);
 
             // 播放声音
             document.getElementById("long-shake-sound").play();
         } else {
-            // $("#shake-sound").remove();
-            // document.getElementById('shake-sound2').pause();
-            // document.getElementById('shake-sound').pause();
             $(".bottle").removeClass("shake");
             // 停止播放声音
             document.getElementById("long-shake-sound").pause();
         }
     },1000);
 
-    // Session.setDefault('soundLastCount',0);
-    // setInterval(function () {
-    //     var soundLastCount = Session.get('soundLastCount');
-    //     var currentCount = Session.get('shakesCount');
-    //     if( currentCount > soundLastCount ){
-    //         document.getElementById("long-shake-sound").play();
-    //         Session.set('soundLastCount',currentCount);
-    //     } else {
-    //         document.getElementById("long-shake-sound").pause();
-    //     }
-    // },800);
-
-    // 解决 iphone 中声音不能播放的问题
-    // function autoPlayAudio1() {
-    //     wx.config({
-    //         // 配置信息, 即使不正确也能使用 wx.ready
-    //         debug: false,
-    //         appId: '',
-    //         timestamp: 1,
-    //         nonceStr: '',
-    //         signature: '',
-    //         jsApiList: []
-    //     });
-    //     wx.ready(function() {
-    //         console.log("声音");
-    //         document.getElementById('play').play();
-    //     });
-    // };
-    //
-    // autoPlayAudio1();
 });
 
 /**
