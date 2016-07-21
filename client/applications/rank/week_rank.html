@@ -1,10 +1,15 @@
 <template name="weekRank">
-    <ul>
-        {{# each topList }}
-          <li class="row">
-              <div class="name">第{{topNo(@index)}}名:{{nickname}}</div>
-              <div class="num">{{formatTime(time)}}</div>
-          </li>
-        {{/each}}
-    </ul>
+  {{# if hasList}}
+  <div class="column week-rank">
+      <img src="/img/week-rank.png" alt="">
+      <ul>
+          {{# each topList }}
+            <li class="row">
+                <div class="name">第{{topNo(@index)}}名:{{nickname}}</div>
+                <div class="num">{{formatTime(time)}}</div>
+            </li>
+          {{/each}}
+      </ul>
+    </div>
+  {{/if}}
 </template>

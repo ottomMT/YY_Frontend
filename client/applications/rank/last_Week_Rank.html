@@ -1,35 +1,38 @@
 <template name="lastWeekRank">
-    <ul>
-      {{# each topList}}
-          <li class="row">
-              <div>
-                  <!--排名图标-->
-                  <img src="{{topImg(@index)}}" alt="">
-              </div>
-              <!--用户昵称-->
-              <div class="name">{{nickname}}</div>
-              <!--摇奶瓶成绩-->
-              <div class="score">{{formatTime(time)}}</div>
-          </li>
-      {{/each}}
-        <!-- <li class="row">
-            <div>
-                <img src="/img/rank-two.png" alt="">
-            </div>
-            <div class="name">土豆麻麻</div>
-            <div class="score">5.22</div>
-        </li>
-        <li class="row">
-            <div>
-                <img src="/img/rank-three.png" alt="">
-            </div>
-            <div class="name">梦妆</div>
-            <div class="score">5.28</div>
-        </li> -->
-    </ul>
-    {{# if hasTop}}
-      <div class="content">
-          恭喜以上三位大奖得主! 请及时到媛育月子中心兑换奖品!
-      </div>
+    {{# if hasList}}
+      <div class="column last-week-rank">
+          <img src="/img/last-week-rank.png" alt="">
+              <ul>
+                {{# each topList}}
+                    <li class="row">
+                        <div>
+                            <!--排名图标-->
+                            <img src="{{topImg(@index)}}" alt="">
+                        </div>
+                        <!--用户昵称-->
+                        <div class="name">{{nickname}}</div>
+                        <!--摇奶瓶成绩-->
+                        <div class="score">{{formatTime(time)}}</div>
+                    </li>
+                {{/each}}
+                  <!-- <li class="row">
+                      <div>
+                          <img src="/img/rank-two.png" alt="">
+                      </div>
+                      <div class="name">土豆麻麻</div>
+                      <div class="score">5.22</div>
+                  </li>
+                  <li class="row">
+                      <div>
+                          <img src="/img/rank-three.png" alt="">
+                      </div>
+                      <div class="name">梦妆</div>
+                      <div class="score">5.28</div>
+                  </li> -->
+              </ul>
+                <div class="content">
+                    恭喜以上三位大奖得主! 请及时到媛育月子中心兑换奖品!
+                </div>
+        </div>
     {{/if}}
 </template>

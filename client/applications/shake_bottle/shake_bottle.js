@@ -355,7 +355,7 @@ Template.shakeBottle.helpers({
     isNone: function(){
           var user = Meteor.user(),
               share = user.profile && user.profile.share || 0,
-              count = UserPrizesList.find({activeId: this._id}).count(),
+              count = UserPrizesList.find({activeId: this._id, userId: user && user._id, isTopPrize:{$ne: true}}).count(),
               isNone = count >= (share + 1);
               Session.set('isNone', isNone);
               Session.set('playCount', count);
@@ -433,22 +433,36 @@ Template.shakeBottle.onRendered(function () {
      * 获取当前晃动次数和上一次晃动次数作比较
      * 如果当前晃动次数大于上一次晃动次数,给 .bottle 添加 shake 动画
      */
-    setInterval(function () {
-        var currentCount = Session.get("shakesCount");
-        var lastCount = Session.get('lastConut');
-        console.log("执行了");
-        if ( currentCount > lastCount ){
-            $(".bottle").addClass("shake");
-            Session.set('lastConut', currentCount);
+    function listen(){
+      setTimeout(function () {
+          var currentCount = Session.get("shakesCount");
+          var lastCount = Session.get('lastConut');
+          console.log("执行了");
+          if ( currentCount > lastCount ){
+              // var audio = new Audio('/img/ready-go.mp3');
+              // audio.play();
+              // if( lastCount%2 > 0){
+              //     document.getElementById('shake-sound').play();
+              // } else{
+              //     document.getElementById('shake-sound2').play();
+              // };
+              $(".bottle").addClass("shake");
+              Session.set('lastConut', currentCount);
 
-            // 播放声音
-            document.getElementById("long-shake-sound").play();
-        } else {
-            $(".bottle").removeClass("shake");
-            // 停止播放声音
-            document.getElementById("long-shake-sound").pause();
-        }
-    },1000);
+              // 播放声音
+              document.getElementById("long-shake-sound").play();
+          } else {
+              // $("#shake-sound").remove();
+              // document.getElementById('shake-sound2').pause();
+              // document.getElementById('shake-sound').pause();
+              $(".bottle").removeClass("shake");
+              // 停止播放声音
+              document.getElementById("long-shake-sound").pause();
+          }
+          listen();
+      },1000);
+    }
+    listen();
 
 });
 

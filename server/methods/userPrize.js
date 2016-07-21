@@ -13,7 +13,7 @@ Meteor.methods({
       return Activity.update({_id: activeId}, {$inc: {read: 1}});
     },
     shakeBbottle: function (config) {
-        console.log('config', config);
+        // console.log('config', config);
         if(!Sign.verify(config)){
             throw new Meteor.Error(406, '签名错误');
         }
@@ -85,20 +85,20 @@ Meteor.methods({
          * 取得用户该活动已获奖品的数量
          */
         var max = activity.max || maxNum;
-        var userPrizesCount = UserPrizesList.find({userId: Meteor.userId(), activeId: config.activity}).count();
-        console.log('userPrizesCount', userPrizesCount);
+        var userPrizesCount = UserPrizesList.find({userId: Meteor.userId(), activeId: config.activity, isTopPrize: {$ne: true}}).count();
+        // console.log('userPrizesCount', userPrizesCount);
         if( userPrizesCount >= max || // 已使用次数大于最大可用次数
             (!user.profile.share && userPrizesCount) ||  // 没有分享过，但已经摇过一次
             (user.profile.share && (user.profile.share + 1 <= userPrizesCount) ) // 分享次数 + 1 大于等于最大可用次数
           ){
             throw new Meteor.Error(403, '您已没有机会');
         }
-        console.log('Meteor.userId()', Meteor.userId());
+        // console.log('Meteor.userId()', Meteor.userId());
         /**
-         * 查询所有可用奖品
+         * 查询所有可用奖品 (非大奖)
          * 剩余数量大于 0 的奖品
          */
-        var remainPrizes = PrizeList.find({remain: {$gt: 0}, activeId: config.activity}).fetch();
+        var remainPrizes = PrizeList.find({isTopPrize: {$ne: true}, activeId: config.activity}).fetch();
         var prizeInfo = {};
         // console.log('remainPrizes', remainPrizes);
 
@@ -110,7 +110,7 @@ Meteor.methods({
          * 随机发放奖品
          */
         function send(prizes) {
-            console.log('in send');
+            // console.log('in send');
             var prizesBox = [],
                 probabilityPrizes = [];
             /**
@@ -210,7 +210,7 @@ Meteor.methods({
             });
         }
 
-        console.log('result', result);
+        // console.log('result', result);
         PrizeList.update({_id:result}, {$inc:{out:1, remain: -1}}); // 奖品发放数 加1，剩余数 减1
         Activity.update({_id: config.activity}, {$inc: {out: 1}}); // 活动总发放数 加1
         insertUserPrize(result, config.activity);
@@ -250,7 +250,7 @@ Meteor.methods({
           var time = new Date().getTime(),
               days = 3600*1000*24;
               time = getTime(time);
-              console.log('lastWeekRank time', time);
+              // console.log('lastWeekRank time', time);
               // 第一周上周排名为空
               if(time.week === 1){
                 return [];
@@ -301,9 +301,9 @@ Meteor.methods({
 
           });
       }
-      console.log('newPrize', newPrize);
+      // console.log('newPrize', newPrize);
       newPrize = quchong(newPrize, 'week');
-      console.log('newPrize --007', newPrize);
+      // console.log('newPrize --007', newPrize);
       return newPrize;
 
     },
@@ -424,7 +424,7 @@ function quchong(list, field){
       }
 
     });
-    console.log('keys', field, 'field', keys);
+    // console.log('keys', field, 'field', keys);
     return newList.sort(function(a,b){return a.time > b.time;});
 
 }

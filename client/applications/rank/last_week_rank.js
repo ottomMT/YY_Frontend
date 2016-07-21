@@ -49,7 +49,7 @@ Template.lastWeekRank.helpers({
    * 是否含有获奖列表
    * @return {[type]} [description]
    */
-  hasTop: function(){
+  hasList: function(){
     var lastTopList = Session.get('lastTopList');
     return lastTopList && lastTopList.length ? true : false;
   }
