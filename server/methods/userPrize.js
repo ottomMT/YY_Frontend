@@ -129,7 +129,7 @@ Meteor.methods({
                         if(item.probability){
                             probabilityPrizes.push(item);
                         }else{
-                            for(var i = 0, len = item.total - item.out; i < len; i++){
+                            for(var i = 0, len = item.total - (item.out || 0); i < len; i++){
                                 prizesBox.push(item._id);
                             }
                         }
