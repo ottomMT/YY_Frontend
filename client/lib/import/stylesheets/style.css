@@ -166,6 +166,9 @@ body{
   margin-left: 0.35rem;
   padding-bottom: 0.6rem;
 }
+.rank-width{
+  width: 10rem !important;
+}
 .rank .week-rank ul{
   /*margin-top: 0.6rem;*/
 }
@@ -215,6 +218,7 @@ body{
 }
 .rank .last-week-rank ul li .score{
   margin-left: 0.2rem;
+  margin-right: 0.35rem;
 }
 .rank .last-week-rank ul img{
   width: 1rem;

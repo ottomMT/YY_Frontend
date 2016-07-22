@@ -25,9 +25,21 @@ Template.myRankModal.helpers({
   myRank: function(){
     return Session.get('myRank');
   },
+  /**
+   * 是否已参与活动
+   * @return {[type]} [description]
+   */
+  isJoin: function(){
+    var myRank = Session.get('myRank');
+    return !(myRank && myRank.length === 0 ? true /*未参与*/ : false);
+  },
+  /**
+   * 显示用户昵称
+   * @return {[type]} [description]
+   */
   name: function(){
-    var user = Meteor.user().wechat;
-    return user && user.nickname || '';
+    var user = Meteor.user();
+    return user && user.profile && user.profile.wechat && user.profile.wechat.nickname || '';
   },
   /**
    * 格式化时间
@@ -38,7 +50,7 @@ Template.myRankModal.helpers({
     if(_.isNumber(time)){
       return (time/1000).toFixed(2);
     }else{
-      return 'NAN';
+        return 'NAN';
     }
   },
   topNo: function(No){

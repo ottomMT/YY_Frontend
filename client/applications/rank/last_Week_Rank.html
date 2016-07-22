@@ -10,7 +10,11 @@
                             <img src="{{topImg(@index)}}" alt="">
                         </div>
                         <!--用户昵称-->
-                        <div class="name">{{nickname}}</div>
+                        {{#if hasDivider}}
+                          <div class="name">{{nickname}}</div>
+                        {{ else }}
+                          <div class="name  rank-width ">{{nickname}}</div>
+                        {{/if}}
                         <!--摇奶瓶成绩-->
                         <span class="flex"></span>
                         <div class="score">{{formatTime(time)}}</div>

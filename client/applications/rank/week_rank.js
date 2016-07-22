@@ -53,5 +53,11 @@ Template.weekRank.helpers({
     var topList = Session.get('topList');
     console.log('topList', topList);
     return topList && topList.length ? true : false;
+  },
+  hasDivider: function(){
+    var topList = Session.get('topList'),
+        lastTopList = Session.get('lastTopList');
+        var isHasDivider = topList && topList.length && lastTopList && lastTopList.length ? true : false;
+    return isHasDivider;
   }
 });

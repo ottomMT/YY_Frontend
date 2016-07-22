@@ -14,7 +14,7 @@ Meteor.methods({
    */
   wechatLoginWithAccessToken: function(query) {
     check(query, Object);
-    console.log('req.query', query);
+    // console.log('req.query', query);
     var response = getTokenResponse(query);
     // console.log('response', response);
     // 是否获取用户 openid，access_token 成功

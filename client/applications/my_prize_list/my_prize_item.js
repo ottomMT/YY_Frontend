@@ -23,6 +23,17 @@ Template.myPrizeItem.helpers({
      */
     useClass: function(myPrize){
        if(this.use){
+        //  使用后关闭弹窗
+         if($("#prizeQrCodeModal").css('display') !== 'none'){
+            $("#prizeQrCodeModal").animate({
+                opacity: 0
+            },300,function () {
+                $(this).css('display','none')
+            });
+            setTimeout(function () {
+                $(".qrcode-square canvas").remove();
+            },300);
+         }
          return 'used';
        }
       var now = new Date(),

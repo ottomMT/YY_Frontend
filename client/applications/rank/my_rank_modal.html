@@ -2,15 +2,19 @@
     <div id="my-rank-modal" class="modal">
         <div class="center-square zoom">
             <div class="content">
+              {{# if isJoin}}
                 <!--用户昵称-->
-                <p>{{name}}</p>
-                {{#each myRank}}
-                  <p>您第{{week}}周最高纪录为</p>
-                  <!--摇奶瓶成绩-->
-                  <p>{{formatTime(time)}} 秒</p>
-                  <!--名次-->
-                  <p>位居第 {{top}} 名</p>
-                {{/each}}
+                  <p>{{name}}</p>
+                  {{#each myRank}}
+                    <p>您第{{week}}周最高纪录为</p>
+                    <!--摇奶瓶成绩-->
+                    <p>{{formatTime(time)}} 秒</p>
+                    <!--名次-->
+                    <p>位居第 {{top}} 名</p>
+                  {{/each}}
+                {{ else }}
+                  您还没有参与活动。
+                {{/if}}
             </div>
             <div class="row">
                 <div class="column">
