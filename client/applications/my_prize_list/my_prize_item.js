@@ -62,12 +62,19 @@ Template.myPrizeItem.helpers({
 Template.myPrizeItem.events({
     'click .prize': function () {
         // console.log('in this', this);
+        // 处理奖品名称
+        if (this.prizeName.length > 25) {
+          var shortPrizeName = this.prizeName.substr(0,25);
+          $("#prizeQrCodeModal .prize-name").text(shortPrizeName + "...");
+        } else {
+          $("#prizeQrCodeModal .prize-name").text(this.prizeName);
+        }
         $(".qrcode-square").qrcode({
             size: 160,
             background: '#fff',
             text: this._id + ',' + Meteor.userId(),
         });
-        $("#prizeQrCodeModal .prize-name").text(this.prizeName);
+
         $("#prizeQrCodeModal").css('display','block').animate({
             opacity: 1
         },200);
