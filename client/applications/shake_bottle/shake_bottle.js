@@ -35,9 +35,10 @@ onShake = function onShake() {
         return TH;
     }
     // 如果到达40度，发开始发奖
-    if(temperature() <= 3.5){
+    if(temperature() <= 3.66){
       getPrize(Session.get('watching'));
-        $("body").append('<audio src="/audio/ding.mp3" autoplay="autoplay"></audio>');
+        document.getElementById("dingSound").play();
+        // $("body").append('<audio id="dingSound" src="/audio/ding.mp3" autoplay="autoplay"></audio>');
         // shake.stopWatch();//停止监听摇晃
     }
     /**
@@ -102,9 +103,9 @@ Template.shakeBottle.events({
      * 用 click 事件模拟手机摇动时的奶瓶及温度计动画
      * 在温度到达40度时为用户发奖品
      */
-    // 'click .animation-square': function () {
-    //   onShake();
-    // },
+    'click .animation-square': function () {
+      onShake();
+    },
     // 'click .animation-square': function () {
     //     if(Session.get('getPrize')) return;
     //     Session.set('shakesCount',Session.get('shakesCount')+1)
@@ -148,6 +149,7 @@ Template.shakeBottle.events({
      * 点击'摇奖品'按钮后模拟摇奶瓶结果出现效果
      */
     'click #start': function () {
+
         console.log('tap #start');
         if(Session.get('unStart')){
           return shareModal('<p>活动未开始</p>', true);
@@ -169,7 +171,7 @@ Template.shakeBottle.events({
 
 
         //设置定时器
-        function myTimer(time, len, one, two) {
+        function myTimer(time, len, count, startGame) {
             var start = 0;
             $("#count-down").css("display","block");
             // console.log(arguments);
@@ -177,9 +179,9 @@ Template.shakeBottle.events({
                 start++;
                 if(start >= len){
                     clearInterval(fn);
-                    two();
+                    startGame();
                 }else{
-                    one(start-1);
+                    count(start-1);
                 }
 
             }, time);
@@ -197,25 +199,6 @@ Template.shakeBottle.events({
 
             console.log('执行完毕');
             $("#count-down-img").attr('src',"/img/go.png");
-
-            /**
-             * 解决 audio 在微信中的兼容性问题
-             */
-            // function autoPlayAudio1() {
-            //     wx.config({
-            //         // 配置信息, 即使不正确也能使用 wx.ready
-            //         debug: false,
-            //         appId: '',
-            //         timestamp: 1,
-            //         nonceStr: '',
-            //         signature: '',
-            //         jsApiList: []
-            //     });
-            //     wx.ready(function() {
-            //         document.getElementById('ready-go').play();
-            //     });
-            // }
-            // autoPlayAudio1();
 
             setTimeout(function () {
                 $("#count-down").hide();
@@ -302,11 +285,13 @@ function initStates(){
   console.log('initStates');
   Session.set('watching', false);
   Session.set('shakesCount', 0);
-  Session.set('sensitivity', 10);
+  Session.set('sensitivity', 15);
   Session.set('getPrize', false);
   Session.set('temperature', '8.3');
+    Session.set('lastConut', '0');
   // var THRem = TH + "rem";
   $('.temperature').css('height','8.3rem');
+    $('#count-down-img').attr('src',"/img/three.png");
   $("#start").css('pointer-events','auto');
 }
 
@@ -314,9 +299,9 @@ function initStates(){
  * 设置页面中温度计的初始温度
  */
 Template.shakeBottle.helpers({
-    temperature:function () {
-        Session.set('temperature', '8.3');
-    },
+    // temperature:function () {
+    //     Session.set('temperature', '8.3');
+    // },
     is404: function(){
       return Session.set('is404', !this.activity);
     },
@@ -330,7 +315,7 @@ Template.shakeBottle.helpers({
     isNone: function(){
           var user = Meteor.user(),
               share = user.profile && user.profile.share || 0,
-              count = UserPrizesList.find({activeId: this._id, userId: user && user._id}).count(),
+              count = UserPrizesList.find({activeId: this._id, userId: user && user._id, isTopPrize:{$ne: true}}).count(),
               isNone = count >= (share + 1);
               Session.set('isNone', isNone);
               Session.set('playCount', count);
@@ -420,34 +405,67 @@ Template.shakeBottle.onRendered(function () {
      * 获取当前晃动次数和上一次晃动次数作比较
      * 如果当前晃动次数大于上一次晃动次数,给 .bottle 添加 shake 动画
      */
-    Session.setDefault('lastConut', 0);
-    setInterval(function () {
-        var currentCount = Session.get("shakesCount");
-        var lastCount = Session.get('lastConut');
-        console.log("执行了");
-        if ( currentCount > lastCount ){
-            // var audio = new Audio('/img/ready-go.mp3');
-            // audio.play();
-            if( lastCount%2 > 0){
-                document.getElementById('shake-sound').play();
-            } else{
-                document.getElementById('shake-sound2').play();
-            };
-            $("body").append('');
-            console.log("???");
-            $(".bottle").addClass("shake");
-            Session.set('lastConut', currentCount);
-        } else {
-            // $("#shake-sound").remove();
-            document.getElementById('shake-sound').pause();
-            $(".bottle").removeClass("shake");
-        }
-    },500);
+    function listen(){
+      setTimeout(function () {
+          var currentCount = Session.get("shakesCount");
+          var lastCount = Session.get('lastConut');
+          console.log("执行了");
+          if ( currentCount > lastCount ){
+              // var audio = new Audio('/img/ready-go.mp3');
+              // audio.play();
+              // if( lastCount%2 > 0){
+              //     document.getElementById('shake-sound').play();
+              // } else{
+              //     document.getElementById('shake-sound2').play();
+              // };
+              $(".bottle").addClass("shake");
+              Session.set('lastConut', currentCount);
 
+              // 播放声音
+              document.getElementById("long-shake-sound").play();
+          } else {
+              // $("#shake-sound").remove();
+              // document.getElementById('shake-sound2').pause();
+              // document.getElementById('shake-sound').pause();
+              $(".bottle").removeClass("shake");
+              // 停止播放声音
+              document.getElementById("long-shake-sound").pause();
+          }
+          listen();
+      },1000);
+    }
+    listen();
 
+    // Session.setDefault('soundLastCount',0);
+    // setInterval(function () {
+    //     var soundLastCount = Session.get('soundLastCount');
+    //     var currentCount = Session.get('shakesCount');
+    //     if( currentCount > soundLastCount ){
+    //         document.getElementById("long-shake-sound").play();
+    //         Session.set('soundLastCount',currentCount);
+    //     } else {
+    //         document.getElementById("long-shake-sound").pause();
+    //     }
+    // },800);
 
-
-
+    // 解决 iphone 中声音不能播放的问题
+    // function autoPlayAudio1() {
+    //     wx.config({
+    //         // 配置信息, 即使不正确也能使用 wx.ready
+    //         debug: false,
+    //         appId: '',
+    //         timestamp: 1,
+    //         nonceStr: '',
+    //         signature: '',
+    //         jsApiList: []
+    //     });
+    //     wx.ready(function() {
+    //         console.log("声音");
+    //         document.getElementById('play').play();
+    //     });
+    // };
+    //
+    // autoPlayAudio1();
 });
 
 /**

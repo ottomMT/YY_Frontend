@@ -3,14 +3,14 @@ Template.myPrizeList.helpers({
      * 我的奖品
      */
     Prizes: function () {
-        return UserPrizesList.find();
+        return UserPrizesList.find({userId: Meteor.userId()});
     },
     /**
      * 查询用户是否含有奖品
      * @return {number} 奖品数量
      */
     hasPrizes: function(){
-        return UserPrizesList.find().count();
+        return UserPrizesList.find({userId: Meteor.userId()}).count();
     },
     share: function(){
       console.log('Session', Session.get('me'));
