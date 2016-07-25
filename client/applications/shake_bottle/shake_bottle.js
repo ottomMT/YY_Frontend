@@ -330,7 +330,7 @@ Template.shakeBottle.helpers({
     isNone: function(){
           var user = Meteor.user(),
               share = user.profile && user.profile.share || 0,
-              count = UserPrizesList.find({activeId: this._id}).count(),
+              count = UserPrizesList.find({activeId: this._id, userId: user && user._id}).count(),
               isNone = count >= (share + 1);
               Session.set('isNone', isNone);
               Session.set('playCount', count);

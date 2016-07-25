@@ -41,6 +41,18 @@ Template.rank.events({
     }
 });
 
+Template.rank.helpers({
+  /**
+   * 是否显示分割线
+   * @return {[type]} [description]
+   */
+  hasDivider: function(){
+    var topList = Session.get('topList'),
+        lastTopList = Session.get('lastTopList');
+    return topList && topList.length && lastTopList && lastTopList.length ? true : false;
+  }
+});
+
 /**
  * 设置当前页面背景样式
  */

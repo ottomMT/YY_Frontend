@@ -45,5 +45,14 @@ Template.weekRank.helpers({
   topNo: function(No){
     var top = ['一', '二', '三', '四', '五', '六'];
     return top[No];
+  },
+  /**
+   * 是否含有排名
+   * @return {[type]} [description]
+   */
+  hasList: function(){
+    var topList = Session.get('topList');
+    console.log('topList', topList);
+    return topList && topList.length ? true : false;
   }
 });
