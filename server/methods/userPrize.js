@@ -294,12 +294,26 @@ Meteor.methods({
           _.forEach(myPrize, function(item){
             if(_.isNumber(item.time)){
               var time = getTime(item.getTime);
-              item.top = UserPrizesList.find({ getTime:{$gte: time.start, $lt: time.end}, time: {$lte: item.time}, activeId: activeId}).count();
+              item.top = UserPrizesList.find({ getTime:{$gte: time.start, $lt: time.end}, time: {$lte: item.time}, activeId: activeId, isTopPrize:{$ne: true}}).count();
+              // 前12名特殊处理
+              if(item.top < 13){
+                item.top = getTopTure(time, item.time, activeId);
+              }
               item.week = time.week;
               newPrize.push(item);
             }
 
           });
+      }
+
+      /**
+       * 获取最佳排名
+       * @return {[type]} [description]
+       */
+      function getTopTure(time, myTime, activeId){
+        var top12 = UserPrizesList.find({ getTime:{$gte: time.start, $lt: time.end}, time: {$lte: myTime}, activeId: activeId, isTopPrize:{$ne: true}}).fetch();
+            top = quchong(top12, 'userId');
+            return top.length;
       }
       // console.log('newPrize', newPrize);
       newPrize = quchong(newPrize, 'week');
@@ -425,7 +439,8 @@ function quchong(list, field){
 
     });
     // console.log('keys', field, 'field', keys);
-    return newList.sort(function(a,b){return a.time > b.time;});
+    // var result = newList.sort(function(a,b){return a.time > b.time;});
+    return _.sortBy(newList, 'time');
 
 }
 
