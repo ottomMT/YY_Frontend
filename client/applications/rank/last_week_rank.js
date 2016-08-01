@@ -4,7 +4,6 @@
  * @return {[type]}           [description]
  */
 Template.lastWeekRank.onCreated(function(){
-  // console.log('this', this);
   Meteor.call('lastWeekRank', {_id: this.data._id}, function(error, result){
     if(!error){
       Session.set('lastTopList', result);
@@ -52,5 +51,11 @@ Template.lastWeekRank.helpers({
   hasList: function(){
     var lastTopList = Session.get('lastTopList');
     return lastTopList && lastTopList.length ? true : false;
-  }
+  },
+  hasDivider: function(){
+      var topList = Session.get('topList'),
+          lastTopList = Session.get('lastTopList');
+          var isHasDivider = topList && topList.length && lastTopList && lastTopList.length ? true : false;
+      return isHasDivider;
+    }
 });

@@ -5,7 +5,11 @@
       <ul>
           {{# each topList }}
             <li class="row">
-                <div class="name">第{{topNo(@index)}}名:{{nickname}}</div>
+                {{#if hasDivider}}
+                  <div class="name">第{{topNo(@index)}}名:{{nickname}}</div>
+                {{ else }}
+                  <div class="name  rank-width ">第{{topNo(@index)}}名:{{nickname}}</div>
+                {{/if}}
                 <span class="flex"></span>
                 <div class="num">{{formatTime(time)}}</div>
             </li>

@@ -348,6 +348,9 @@ Template.shakeBottle.helpers({
     id: function(){
       return {_id: this._id};
     },
+    loading: function(){
+      return Session.get('getPrize') ? true : false;
+    },
     /**
      * 是否已玩过
      * @return {[type]} [description]

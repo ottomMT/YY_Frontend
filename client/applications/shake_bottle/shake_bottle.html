@@ -52,7 +52,9 @@
     <!--分享弹层-->
     {{> shareModal}}
     <!--发奖前的加载中界面-->
-    <!--{{> awardLoading}}-->
+    {{# if loading}}
+      {{> awardLoading}}
+    {{/if}}
     <!--倒计时弹层-->
     {{> countDown}}
 </template>
