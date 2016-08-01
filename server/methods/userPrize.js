@@ -584,7 +584,9 @@ SyncedCron.add({
 
           // 未发过奖品，或者总量大于已发放量
           if(!item.out || (_.isNumber(item.out) && item.out < item.total)){
-            remainPrizes.push(item);
+            for(var i = 0, len =  item.total - (item.out || 0) ; i < len; i++){
+              remainPrizes.push(item);
+            }
           }
 
         }
