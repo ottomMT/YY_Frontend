@@ -439,7 +439,8 @@ function quchong(list, field){
 
     });
     // console.log('keys', field, 'field', keys);
-    return newList.sort(function(a,b){return a.time > b.time;});
+    // var result = newList.sort(function(a,b){return a.time > b.time;});
+    return _.sortBy(newList, 'time');
 
 }
 
