@@ -400,7 +400,7 @@ function getTime(myTime){
  * 去除重复的 用户ID
  * @return {[type]} [description]
  */
-function quchong(list, field){
+function quchong(list, field, isSendPrize){
 
     field = _.isString(field) ? field : 'userId';
     if(!_.isArray(list)){
@@ -443,9 +443,11 @@ function quchong(list, field){
       }
 
       if(keys[item[field]] && keys[item[field]].id === item._id){
-        delete item.userId; //删除列表中的userId
-        delete item.prizeName;// 删除列表中的奖品名称
-        delete item.getTime; //删除列表的获取时间
+        if(!isSendPrize){
+          delete item.userId; //删除列表中的userId
+          delete item.prizeName;// 删除列表中的奖品名称
+          delete item.getTime; //删除列表的获取时间
+        }
         newList.push(item);
       }
 
@@ -562,11 +564,9 @@ SyncedCron.add({
               time.start = time.start - (days * 7);
             }
 
-        // 查询上周一开始，周本一技术的奖品
-        // 只取需要展示的字段「time,prizeName,nickname, getTime」
-        // return
+        // 发放大奖需要用户 ID 
         var PrizesList = UserPrizesList.find({getTime:{$gt: time.start, $lt: time.end}, activeId: activeId, isTopPrize:{$ne: true}}, {sort: {time:1}, limit: 6, fields: {userId: 1, time: 1, activeId: 1, nickname: 1, user: 1}}).fetch();
-        var result = quchong(PrizesList);
+        var result = quchong(PrizesList, false, true);
             result.splice(3, 10);
         return result;
     }
