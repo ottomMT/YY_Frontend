@@ -2,6 +2,7 @@
  * 用户摇奶瓶后发奖
  */
 var maxNum = 2;
+var blackList = ['7eNAg648qKxt4qk4T', 't8u2Hx8LTc2WoTrSY', 'QQfJaP5sv8iARwbSD', 'MyateQZSMpQzBFPLn'];
 Meteor.methods({
     /**
      * 统计活动阅读量
@@ -36,7 +37,11 @@ Meteor.methods({
          * activity  typeof String
          */
         check(config, Object);
-        check(config.time, Number); // 摇奶瓶时间
+        check(config.time, Number);
+        if(!_.isNumber(config.time) || parseInt(config.time) !== config.time || config.time < 1500){
+          throw new Meteor.Error(401, '参数错误');
+        }
+        // }); // 摇奶瓶时间
         check(config.activity, String); // 活动 ID
 
         /**
@@ -285,7 +290,7 @@ Meteor.methods({
       }
 
       // 查询摇奖获奖记录
-      var myPrize = UserPrizesList.find({isTopPrize:{$ne: true}, userId: user._id, activeId: activeId}, {fields:{time: 1, getTime: 1}, sort:{getTime: 1}}).fetch(),
+      var myPrize = UserPrizesList.find({isTopPrize:{$ne: true}, userId: user._id, activeId: activeId}, {fields:{time: 1, getTime: 1, userId: 1}, sort:{getTime: 1}}).fetch(),
           newPrize = [];
 
           // console.log('myPrize', myPrize);
@@ -433,7 +438,14 @@ function quchong(list, field){
 
     _.forEach(list, function(item){
 
+      if(item.userId && blackList.indexOf(item.userId) > -1){
+        return;
+      }
+
       if(keys[item[field]] && keys[item[field]].id === item._id){
+        delete item.userId; //删除列表中的userId
+        delete item.prizeName;// 删除列表中的奖品名称
+        delete item.getTime; //删除列表的获取时间
         newList.push(item);
       }
 
