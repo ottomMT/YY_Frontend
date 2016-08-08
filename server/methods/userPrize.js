@@ -129,7 +129,7 @@ Meteor.methods({
                         if(item.probability){
                             probabilityPrizes.push(item);
                         }else{
-                            for(var i = 0, len = item.remain; i < len; i++){
+                            for(var i = 0, len = item.total - item.out; i < len; i++){
                                 prizesBox.push(item._id);
                             }
                         }
@@ -178,7 +178,7 @@ Meteor.methods({
                 // console.log('allPrizes', allPrizes.length);
                 return allPrizes[Math.ceil(Math.random()*allPrizes.length) - 1];
             }
-
+            console.log('prizesBox.length', prizesBox.length);
             return commonPrize(prizesBox);
 
         }
@@ -428,3 +428,152 @@ function quchong(list, field){
     return newList.sort(function(a,b){return a.time > b.time;});
 
 }
+
+SyncedCron.add({
+  name: 'sendBigPrize',
+  schedule: function(parser) {
+    // parser is a later.parse object
+    return parser.cron('1 0 1-31 7-8 *');
+  },
+  job: function() {
+      var now = new Date();
+      if(now.getDay() !== 1){
+        return;
+      }
+    console.log('day', new Date().getDay());
+    console.log('执行任务');
+
+
+    // 查询所有活动
+    var activity = Activity.find().fetch(),
+        readyActivity = [];
+
+    /**
+     * 取得可以发奖的奖品
+     * 验证活动开始时间结束时间
+     * 取出已经开始，并且结束时间在一周之内的活动
+     * @param  {[type]} activity      [description]
+     * @param  {[type]} function(item [description]
+     * @return {[type]}               [description]
+     */
+    _.forEach(activity, function(item){
+      var startAt = item.startAt && new Date(item.startAt) || false,
+          endAt =  item.endAt && new Date(item.endAt) || false;
+
+          if(startAt && endAt){
+            // 活动一开始
+            if(now > startAt){
+
+              // 活动结束一周之内
+              if(now < endAt || now.getTime() - endAt.getTime() < (1000*3600*24*8)){
+                readyActivity.push(item);
+              }
+
+            }
+
+          }
+
+    });
+
+    console.log('readyActivity', readyActivity);
+    // 遍历所有活动，
+    _.forEach(readyActivity, function(item){
+      // 取得活动上周排名
+      var top3 = getLastWeekRank(item._id);
+      console.log('top3', top3);
+
+      // 取得剩余大奖
+      var topPrizes = getTopPrizes(item._id);
+      console.log('topPrizes', topPrizes);
+
+      var send = sendPrizes(top3, topPrizes);
+      console.log('sendPrizes', send);
+
+    });
+
+    function sendPrizes(top, prizes){
+      var send = [];
+      _.forEach(top, function(item, index){
+        var myBigPrize,
+            myPrize = prizes[index];
+        // 存在该奖品
+        if(myPrize){
+          myBigPrizes = item;
+          myBigPrizes.prizeName = myPrize.name || ''; //设置奖品名称
+          myBigPrizes.prizeId = myPrize._id || ''; // 奖品ID
+          myBigPrizes.isTopPrize = true; //奖品为大奖
+          myBigPrizes.defaultId = item._id; //记录ID
+          myBigPrizes.getTime = new Date().getTime(); // 获取奖品时间
+          delete myBigPrizes._id; //删除
+
+          PrizeList.update({_id: myPrize._id}, {$inc:{out: 1}}); //奖品发放量 +1
+          Activity.update({_id: item.activeId}, {$inc:{out: 1}}); // 活动发放量 +1
+          send.push(myBigPrizes);
+          UserPrizesList.insert(myBigPrizes); // 写入奖品
+
+        }
+
+      });
+
+      return send;
+    }
+
+    // 取得该活动上周排名
+    function getLastWeekRank(activeId){
+        var time = new Date().getTime(),
+            days = 3600*1000*24;
+            time = getTime(time);
+            // 第一周上周排名为空
+            if(time.week === 1){
+              return [];
+            // 第二周取上周排名
+            }else if(time.week === 2){
+              time = getTime(new Date('2016-07-22 00:00:00').getTime());
+            }else{
+              // 上周开始等于本周结束时间，上周结束时间等于本周
+              time.end = time.start;
+              time.start = time.start - (days * 7);
+            }
+
+        // 查询上周一开始，周本一技术的奖品
+        // 只取需要展示的字段「time,prizeName,nickname, getTime」
+        // return
+        var PrizesList = UserPrizesList.find({getTime:{$gt: time.start, $lt: time.end}, activeId: activeId, isTopPrize:{$ne: true}}, {sort: {time:1}, limit: 6, fields: {userId: 1, time: 1, activeId: 1, nickname: 1, user: 1}}).fetch();
+        var result = quchong(PrizesList);
+            result.splice(3, 10);
+        return result;
+    }
+
+
+    // 取得剩余的大奖
+    function getTopPrizes(activeId){
+
+      var prizes = PrizeList.find({isTopPrize: true, activeId: activeId}).fetch(),
+          remainPrizes = [];
+
+      _.forEach(prizes, function(item){
+
+        if(_.isNumber(item.total) && item.total){
+
+          // 未发过奖品，或者总量大于已发放量
+          if(!item.out || (_.isNumber(item.out) && item.out < item.total)){
+            remainPrizes.push(item);
+          }
+
+        }
+
+      });
+
+      // 随机排序所有大奖
+      var allPrizes = remainPrizes.sort(function (a, b) {
+          return Math.random()>0.5 ? -1 : 1;
+      });
+      allPrizes.splice(3, 1000);
+      return allPrizes;
+    }
+    // var numbersCrunched = CrushSomeNumbers();
+    // return numbersCrunched;
+  }
+});
+
+SyncedCron.start();

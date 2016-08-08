@@ -40,3 +40,4 @@ shake:shake
 meteorhacks:async
 dschulz:jquery-qrcode
 jparker:crypto-md5
+percolate:synced-cron
