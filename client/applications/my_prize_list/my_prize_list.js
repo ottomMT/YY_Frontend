@@ -26,16 +26,11 @@ Template.myPrizeList.helpers({
      * @return {boolean} 活动是否未开始
      */
     unStart: function(){
-      var activity = Activity.findOne();
-      if(activity && activity.startAt){
-        if(new Date() > new Date(activity.startAt)){
-          return false;
-        }else{
+        if(Session.get('time') && new Date(Session.get('time')) < new Date('2016-07-22 00:00:00')){
           return true;
+        }else{
+          return false;
         }
-      }else{
-         return true;
-      }
     }
 });
 
