@@ -39,7 +39,7 @@ Template.myRankModal.helpers({
    */
   name: function(){
     var user = Meteor.user();
-    return user && user.profile && user.profile.nickname || '';
+    return user && user.profile && user.profile.wechat && user.profile.wechat.nickname || '';
   },
   /**
    * 格式化时间
