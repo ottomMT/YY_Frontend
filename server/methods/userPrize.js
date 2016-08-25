@@ -220,33 +220,92 @@ Meteor.methods({
 
     /**
      * 本周排名
+     * 获取开始时间和结束时间
      * @return {[type]} [description]
      */
     weekRank: function(query){
-      var now = new Date(), // 当前时间
-          days =  3600*1000*24, // 一天的毫秒数
-          weekday = now.getDay(), // 当前周数
-          time = new Date(moment(now).format('YYYY-MM-DD 00:00:00')).getTime() , // 今天 00:00 时间戳
-          weekStart = time - ((weekday - 1) * days), // 开始时间 本周一 00:00
-          weekEnd = time + ((7 - weekday) * days); // 结束时间 下周一 00:00
+        check(query, Object);
+        check(query._id, String);
+          var time = new Date().getTime();
+              time = getTime(time);
+              // 活动结束后，取消返回本周排名
+              // if(time.week > 4){
+              //   return true;
+              // }
           // 查询大于本周开始，小于本周结束，的奖品。
           // 只取需要展示的字段「time,prizeName,nickname, getTime」
-          return UserPrizesList.find({getTime:{$gt: weekStart, $lt: weekEnd},  activeId: query._id, isTopPrize:{$ne: true}}, {sort: {time:1}, limit: 6, fields: {prizeName: 1, getTime: 1, time: 1, nickname: 1}}).fetch();
+          var PrizesList = UserPrizesList.find({getTime:{$gt: time.start, $lt: time.end},  activeId: query._id, isTopPrize:{$ne: true}}, {sort: {time:1}, limit: 12, fields: {prizeName: 1, getTime: 1, userId: 1, time: 1, nickname: 1}}).fetch();
+            var result = quchong(PrizesList);
+                result.splice(6, 10);
+            return result;
     },
     /**
      * 上周排名
+     * 获取开始时间和结束时间
      * @return {[type]} [description]
      */
     lastWeekRank: function(query){
-      var now = new Date(), // 当前时间
-          days =  3600*1000*24, // 一天的毫秒数
-          weekday = now.getDay(), // 当前周数
-          time = new Date(moment(now).format('YYYY-MM-DD 00:00:00')).getTime() , // 今天 00:00 时间戳
-          weekEnd = time - ((weekday - 1) * days), // 结束时间 本周一 00:00
-          weekStart = weekEnd  -  (7 * days); // 开始时间 上周一 00:00
+        check(query, Object);
+        check(query._id, String);
+          var time = new Date().getTime(),
+              days = 3600*1000*24;
+              time = getTime(time);
+              console.log('lastWeekRank time', time);
+              // 第一周上周排名为空
+              if(time.week === 1){
+                return [];
+              // 第二周取上周排名
+              }else if(time.week === 2){
+                time = getTime(new Date('2016-07-22 00:00:00').getTime());
+              }else{
+                // 上周开始等于本周结束时间，上周结束时间等于本周
+                time.end = time.start;
+                time.start = time.start - (days * 7);
+              }
+
           // 查询上周一开始，周本一技术的奖品
           // 只取需要展示的字段「time,prizeName,nickname, getTime」
-          return UserPrizesList.find({getTime:{$gt: weekStart, $lt: weekEnd}, activeId: query._id, isTopPrize:{$ne: true}}, {sort: {time:1}, limit: 3, fields: {prizeName: 1, getTime: 1, time: 1, nickname: 1}}).fetch();
+          // return
+          var PrizesList = UserPrizesList.find({getTime:{$gt: time.start, $lt: time.end}, activeId: query._id, isTopPrize:{$ne: true}}, {sort: {time:1}, limit: 6, fields: {prizeName: 1, userId: 1, getTime: 1, time: 1, nickname: 1}}).fetch();
+          var result = quchong(PrizesList);
+              result.splice(3, 10);
+          return result;
+    },
+
+    /**
+     * 我的排名
+     * 取得个人奖品列表
+     * 查询比自己快的摇奖记录的个数
+     */
+    myRank: function(activeId){
+      check(activeId, String);
+      var user = Meteor.user();
+      if(!user){
+        throw new Meteor.Error(401, '您未登录');
+      }
+
+      // 查询摇奖获奖记录
+      var myPrize = UserPrizesList.find({isTopPrize:{$ne: true}, userId: user._id, activeId: activeId}, {fields:{time: 1, getTime: 1}, sort:{getTime: 1}}).fetch(),
+          newPrize = [];
+
+          // console.log('myPrize', myPrize);
+      if(myPrize && _.isArray(myPrize)){
+
+          _.forEach(myPrize, function(item){
+            if(_.isNumber(item.time)){
+              var time = getTime(item.getTime);
+              item.top = UserPrizesList.find({ getTime:{$gte: time.start, $lt: time.end}, time: {$lte: item.time}, activeId: activeId}).count();
+              item.week = time.week;
+              newPrize.push(item);
+            }
+
+          });
+      }
+      console.log('newPrize', newPrize);
+      newPrize = quchong(newPrize, 'week');
+      console.log('newPrize --007', newPrize);
+      return newPrize;
+
     },
 
     /**
@@ -283,3 +342,89 @@ Meteor.methods({
       return Meteor.users.update({_id: Meteor.userId()}, {$set:{'profile.share': share}});
     }
 });
+
+/**
+ * 通过奖品获取时间，计算该奖品所在那一周。返回该周的开始时间和结束时间
+ * @param  {[type]} myTime [description]
+ * @return {[type]}        [description]
+ */
+function getTime(myTime){
+
+      var firstWeek = new Date('2016-08-01 00:00:00'),
+          startWeek = 31;
+      var now = new Date(myTime), // 当前时间
+          days =  3600*1000*24, // 一天的毫秒数
+          weekday = now.getDay() || 7, // 当前周几 0 - 6
+          time = new Date(moment(now).format('YYYY-MM-DD 00:00:00')).getTime() , // 今天 00:00 时间戳
+          weekStart = time - ((weekday - 1) * days), // 开始时间 本周一 00:00
+          weekEnd = weekStart + (7 * days); // 结束时间 下周一 00:00
+
+      // 如果当前时间小于 第一次结束时间，
+      // 则开始时间为当前7-19 ，解释时间为 8-1
+      if(now < firstWeek){
+        weekStart = new Date('2016-07-1 00:00:00').getTime();
+        weekEnd = firstWeek.getTime();
+      }
+
+      // 结束时间
+      var endTime = new Date(weekEnd);
+      // 返回结果
+      return {
+        start: weekStart,
+        end: weekEnd,
+        week: endTime > firstWeek ? Math.ceil((endTime.getTime() - firstWeek.getTime()) /days/7) + 1 : 1
+      };
+}
+
+
+/**
+ * 去除重复的 用户ID
+ * @return {[type]} [description]
+ */
+function quchong(list, field){
+
+    field = _.isString(field) ? field : 'userId';
+    if(!_.isArray(list)){
+      return [];
+    }
+
+    // 取出排重后的ID 为 key 的对象
+    var keys = {},
+        newList = [];
+    _.forEach(list, function(item){
+      if(_.isNumber(item.time) && item.time && item[field]){
+
+        // 如果有该用户
+        /**
+         * 如果有该用户
+         * 验证当前时间你是否小于已记录时间
+         * 如果大于当前时间 ，则重新设置当前记录值
+         * @param  {[type]} keys[item._id] [description]
+         * @return {[type]}                [description]
+         */
+        if(keys[item[field]]){
+
+            if(keys[item[field]].time > item.time){
+              keys[item[field]].time = item.time;
+              keys[item[field]].id = item._id;
+            }
+
+        }else{
+        // 不存在该用户,直接设置
+          keys[item[field]] = {id: item._id, time: item.time};
+        }
+
+      }
+    });
+
+    _.forEach(list, function(item){
+
+      if(keys[item[field]] && keys[item[field]].id === item._id){
+        newList.push(item);
+      }
+
+    });
+    console.log('keys', field, 'field', keys);
+    return newList.sort(function(a,b){return a.time > b.time;});
+
+}

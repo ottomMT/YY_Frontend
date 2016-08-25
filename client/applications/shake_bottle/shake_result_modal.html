@@ -16,8 +16,12 @@
                     </a>
                 </div>
                 <div class="column">
+                  {{# if showShareButton}}
                     <!--不满足继续摇按钮-->
                     <img id="continue-shake" src="/img/continue-shake.png" alt="">
+                  {{ else }}
+                    <img id="close-share-modal-button" class="close-modal-button" src="/img/close.png" alt="">
+                  {{ /if}}
                 </div>
             </div>
         </div>

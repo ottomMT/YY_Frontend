@@ -1,9 +1,6 @@
 /**
  *  配置 shake.js 基础信息
  */
-Session.setDefault('watching', false);
-Session.setDefault('shakesCount', 0);
-Session.setDefault('sensitivity', 10);
 
 /**
  * 监听摇晃成功后回调
@@ -75,8 +72,9 @@ onShake = function onShake() {
             setTimeout(function () {
                 $("#shake-result-modal .center-square").removeClass("zoom");
             },10);
-            Session.set('getPrize', false);
-            Session.set('watching', false);
+
+            // 重置所有状态，马上开始下一次摇奖
+            initStates();
 
         });
     }
@@ -103,9 +101,9 @@ Template.shakeBottle.events({
      * 用 click 事件模拟手机摇动时的奶瓶及温度计动画
      * 在温度到达40度时为用户发奖品
      */
-    // 'click .animation-square': function () {
-    //   onShake();
-    // },
+    'click .animation-square': function () {
+      onShake();
+    },
     // 'click .animation-square': function () {
     //     if(Session.get('getPrize')) return;
     //     Session.set('shakesCount',Session.get('shakesCount')+1)
@@ -149,11 +147,13 @@ Template.shakeBottle.events({
      * 点击'摇奖品'按钮后模拟摇奶瓶结果出现效果
      */
     'click #start': function () {
-
+        console.log('tap #start');
         if(Session.get('unStart')){
           return shareModal('<p>活动未开始</p>', true);
         }else if(Session.get('isEndding')){
           return shareModal('<p>活动已结束</p>', true);
+        }else if(Session.get('isNone') && Session.get('playCount') === 1){
+          return shareModal('<p>您已参与过一次啦!</p><p>分享到朋友圈</p><p>可增加一次机会呦</p>');
         }else if(Session.get('isNone')){
           return shareModal('<p>您已玩过</p>', true);
         }
@@ -211,11 +211,34 @@ Template.shakeBottle.events({
     // }
 });
 
-
+/**
+ * View 创建之后初始化 state 码
+ * @param  {[type]} function( [description]
+ * @return {[type]}           [description]
+ */
 Template.shakeBottle.onCreated(function(){
   Session.set('activeId', this.data._id);
   Meteor.call('readActivity', this.data._id); // 统计阅读量
+  Session.set('isNone', false); //设置没有玩过
+  Session.set('playCount', 0); //玩过的次数为 0
+  initStates(); //初始化摇奖状态
 });
+
+/**
+ * 初始化摇奖状态
+ * [resetStates description]
+ */
+function initStates(){
+  console.log('initStates');
+  Session.set('watching', false);
+  Session.set('shakesCount', 0);
+  Session.set('sensitivity', 10);
+  Session.set('getPrize', false);
+  Session.set('temperature', '8.3');
+  // var THRem = TH + "rem";
+  $('.temperature').css('height','8.3rem');
+  $("#start").css('pointer-events','auto');
+}
 
 /**
  * 设置页面中温度计的初始温度
@@ -229,6 +252,19 @@ Template.shakeBottle.helpers({
     },
     id: function(){
       return {_id: this._id};
+    },
+    /**
+     * 是否已玩过
+     * @return {[type]} [description]
+     */
+    isNone: function(){
+          var user = Meteor.user(),
+              share = user.profile && user.profile.share || 0,
+              count = UserPrizesList.find({activeId: this._id}).count(),
+              isNone = count >= (share + 1);
+              Session.set('isNone', isNone);
+              Session.set('playCount', count);
+          return isNone;
     },
     /**
      * 活动未开始
@@ -289,6 +325,9 @@ Template.shakeBottle.onRendered(function () {
       shareModal('<p>活动未开始</p>', true);
     }else if(Session.get('isEndding')){
       shareModal('<p>活动已结束</p>', true);
+    }else if(Session.get('isNone') && Session.get('playCount') === 1){
+      // 已经玩过一次，还可以分享继续玩
+      shareModal('<p>您已参与过一次啦!</p><p>分享到朋友圈</p><p>可增加一次机会呦</p>');
     }
   }
   activityState();
