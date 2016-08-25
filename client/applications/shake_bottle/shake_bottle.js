@@ -101,9 +101,9 @@ Template.shakeBottle.events({
      * 用 click 事件模拟手机摇动时的奶瓶及温度计动画
      * 在温度到达40度时为用户发奖品
      */
-    'click .animation-square': function () {
-      onShake();
-    },
+    // 'click .animation-square': function () {
+    //   onShake();
+    // },
     // 'click .animation-square': function () {
     //     if(Session.get('getPrize')) return;
     //     Session.set('shakesCount',Session.get('shakesCount')+1)
