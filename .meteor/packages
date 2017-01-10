@@ -23,21 +23,15 @@ check                               # 数据检查API
 pcel:loading                        # 「读取中」模板
 session                             # session API
 momentjs:moment                     # momentjs SDK
-aldeed:autoform                     # 自动化表单组件
 aldeed:collection2                  # 数据表Scheme组件
 drewy:datetimepicker                # jQuery datetimepicker
 zimme:active-route@2.3.3-rc.1       # 路由激活状态处理函数
 cfs:standard-packages               # collectionFS核心库,用于MongoDB文件上传存储
 cfs:gridfs                          # gridFS支持库
-yogiben:autoform-file               # Autoform 文件上传组件
-msavin:mongol                       # 「开发组件」前端界面查询MongoDB库内容,使用 ctrl + M 激活
-msavin:jetsetter                    # 「开发组件」前端界面查询Session内容,与mongol同时激活
 alanning:roles                      # Roles权限控制组件
 service-configuration               # 三方平台接入组件
 http
 mrt:cookies
 shake:shake
 meteorhacks:async
-dschulz:jquery-qrcode
-jparker:crypto-md5
 percolate:synced-cron
