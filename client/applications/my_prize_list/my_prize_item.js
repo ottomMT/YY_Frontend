@@ -71,7 +71,7 @@ Template.myPrizeItem.helpers({
  * @return {[type]}   [description]
  */
 Template.myPrizeItem.events({
-    'click .prize': function () {
+    'touchstart .prize': function () {
         // console.log('in this', this);
         // 处理奖品名称
         if (this.prizeName.length > 25) {

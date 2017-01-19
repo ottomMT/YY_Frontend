@@ -2,7 +2,7 @@
  * 关闭奖券的二维码弹层
  */
 Template.prizeQrCodeModal.events({
-    'click #close-button': function () {
+    'touchstart #close-button': function () {
         $("#prizeQrCodeModal").animate({
             opacity: 0
         },300,function () {

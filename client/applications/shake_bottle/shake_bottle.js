@@ -51,12 +51,12 @@ onShake = function onShake() {
      */
     function getPrize(start){
         Session.set('getPrize', true);
-        var time = new Date().getTime() - start,
-            post = {time: time, activity: Session.get('activeId')},
-            sign = Sign.create(post);
-
+        var time = new Date().getTime() - start;
+        var post = {time: time, activity: Session.get('activeId')};
+        var sign = Sign.create(post);
         post.sign = sign;
         Meteor.call('shakeBbottle', post, function (error, result) {
+            console.log('已经 call 发奖方法');
             // 如果发生错误,显示错误信息
             if(error){
                 console.error('shakeBbottle error', error);
@@ -191,7 +191,7 @@ Template.shakeBottle.events({
     /**
      * 点击'摇奖品'按钮后模拟摇奶瓶结果出现效果
      */
-    'click #start': function () {
+    'touchstart #start': function () {
 
         console.log('tap #start');
         if(Session.get('unStart')){
@@ -270,7 +270,7 @@ Template.shakeBottle.events({
     //     // $(".modal").css('display','none').find(".center-square").addClass("zoom");
     // },
 
-    'click #close-share-modal-button': function () {
+    'touchstart #close-share-modal-button': function () {
         $(".modal .center-square").addClass("zoom");
         setTimeout(function () {
             $(".modal").css('display','none');
@@ -283,7 +283,7 @@ Template.shakeBottle.events({
      * 返回的 false 值目的是阻止事件冒泡
      * @returns {boolean}
      */
-    'click #continue-shake': function () {
+    'touchstart #continue-shake': function () {
         // 隐藏摇奶瓶结果界面
         $("#shake-result-modal .center-square").addClass("zoom");
         shareModal('<p>您已参与过一次啦!</p><p>分享到朋友圈</p><p>可增加一次机会呦</p>');

@@ -5,6 +5,8 @@
     "start": "meteor run"
   },
   "dependencies": {
+    "babel-runtime": "^6.20.0",
+    "crypto-js": "^3.1.9-1",
     "meteor-node-stubs": "^0.2.3",
     "wechat-api": "^1.28.0"
   }

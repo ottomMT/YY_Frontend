@@ -2,7 +2,7 @@ Template.rank.events({
     /**
      * 点击'我的排名'按钮显示排名信息
      */
-    'click #my-rank-button': function () {
+    'touchstart #my-rank-button': function () {
         $("#my-rank-modal").css('display','block');
         setTimeout(function () {
             $("#my-rank-modal .center-square").removeClass("zoom");
@@ -13,7 +13,7 @@ Template.rank.events({
      * 返回 false 值是为阻止事件冒泡
      * @returns {boolean}
      */
-    'click #close-modal-button': function () {
+    'touchstart #close-modal-button': function () {
         $(".modal .center-square").addClass("zoom");
         setTimeout(function () {
             $(".modal").css('display','none');
@@ -24,7 +24,7 @@ Template.rank.events({
     /**
      * 点击弹层空白区域关闭弹层
      */
-    'click .modal': function () {
+    'touchstart .modal': function () {
         $(".modal .center-square").addClass("zoom");
         setTimeout(function () {
             $(".modal").css('display','none');
@@ -36,7 +36,7 @@ Template.rank.events({
      * 返回 false 值是为阻止事件冒泡
      * @returns {boolean}
      */
-    'click .center-square': function () {
+    'touchstart .center-square': function () {
         return false;
     }
 });

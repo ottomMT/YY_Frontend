@@ -14,13 +14,13 @@ Meteor.methods({
       return Activity.update({_id: activeId}, {$inc: {read: 1}});
     },
     shakeBbottle: function (config) {
-        // console.log('config', config);
+        console.log('config', config);
         if(!Sign.verify(config)){
             throw new Meteor.Error(406, '签名错误');
         }
 
         var user = Meteor.user();
-        // console.log('user', user);
+        console.log('user', user);
 
         /**
          * 验证用户权限,用户是否已登录
@@ -48,7 +48,7 @@ Meteor.methods({
          * 验证活动是否进行中
          */
         var activity = Activity.findOne(config.activity);
-        // console.log('activity', activity);
+        console.log('activity', activity);
         if(!activity){
             throw new Meteor.Error(404, '该活动不存在');
         }
@@ -91,7 +91,7 @@ Meteor.methods({
          */
         var max = activity.max || maxNum;
         var userPrizesCount = UserPrizesList.find({userId: Meteor.userId(), activeId: config.activity, isTopPrize: {$ne: true}}).count();
-        // console.log('userPrizesCount', userPrizesCount);
+        console.log('userPrizesCount', userPrizesCount);
         if( userPrizesCount >= max || // 已使用次数大于最大可用次数
             (!user.profile.share && userPrizesCount) ||  // 没有分享过，但已经摇过一次
             (user.profile.share && (user.profile.share + 1 <= userPrizesCount) ) // 分享次数 + 1 大于等于最大可用次数
@@ -105,7 +105,7 @@ Meteor.methods({
          */
         var remainPrizes = PrizeList.find({isTopPrize: {$ne: true}, activeId: config.activity}).fetch();
         var prizeInfo = {};
-        // console.log('remainPrizes', remainPrizes);
+        console.log('remainPrizes', remainPrizes);
 
 
         /**
@@ -115,7 +115,7 @@ Meteor.methods({
          * 随机发放奖品
          */
         function send(prizes) {
-            // console.log('in send');
+            console.log('in send');
             var prizesBox = [],
                 probabilityPrizes = [];
             /**
@@ -180,19 +180,19 @@ Meteor.methods({
                 var allPrizes = prizesBox.sort(function (a, b) {
                     return Math.random()>0.5 ? -1 : 1;
                 });
-                // console.log('allPrizes', allPrizes.length);
+                console.log('allPrizes', allPrizes.length);
                 return allPrizes[Math.ceil(Math.random()*allPrizes.length) - 1];
             }
             console.log('prizesBox.length', prizesBox.length);
             return commonPrize(prizesBox);
 
         }
-        // console.time('in');
+        console.time('in');
         var result = send(remainPrizes);
             // result = result[Math.ceil(Math.random()*result.length) - 1];
-            // console.timeEnd('in');
+            console.timeEnd('in');
 
-
+        console.log('奖品信息', prizeInfo);
 
         function insertUserPrize(prizeId, activeId) {
             var info = user.profile && user.profile.wechat || {};
@@ -215,7 +215,7 @@ Meteor.methods({
             });
         }
 
-        // console.log('result', result);
+        console.log('result', result);
         PrizeList.update({_id:result}, {$inc:{out:1, remain: -1}}); // 奖品发放数 加1，剩余数 减1
         Activity.update({_id: config.activity}, {$inc: {out: 1}}); // 活动总发放数 加1
         insertUserPrize(result, config.activity);
@@ -564,7 +564,7 @@ SyncedCron.add({
               time.start = time.start - (days * 7);
             }
 
-        // 发放大奖需要用户 ID 
+        // 发放大奖需要用户 ID
         var PrizesList = UserPrizesList.find({getTime:{$gt: time.start, $lt: time.end}, activeId: activeId, isTopPrize:{$ne: true}}, {sort: {time:1}, limit: 6, fields: {userId: 1, time: 1, activeId: 1, nickname: 1, user: 1}}).fetch();
         var result = quchong(PrizesList, false, true);
             result.splice(3, 10);
